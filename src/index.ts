@@ -1,19 +1,19 @@
-import fastify from "fastify";
+import fastify from 'fastify';
 
 const server = fastify({
   logger: {
     prettyPrint:
-      process.env.NODE_ENV !== "development"
+      process.env.NODE_ENV !== 'development'
         ? {
-            translateTime: "HH:MM:ss Z",
-            ignore: "pid,hostname",
+            translateTime: 'HH:MM:ss Z',
+            ignore: 'pid,hostname',
           }
         : false,
   },
 });
 
-server.get("/ping", async (_request, _reply) => {
-  return "pong\n";
+server.get('/ping', async (_request, _reply) => {
+  return 'pong\n';
 });
 
 server.listen(process.env.PORT || 8080, (err, address) => {
