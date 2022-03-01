@@ -34,3 +34,13 @@ export async function getTotalShares(contracts: Contracts) {
 
   return await Promise.all(calls);
 }
+
+export async function getTotalUnderlyingMinusSponsored(contracts: Contracts) {
+  const calls = [];
+
+  for (const [_vault, contract] of Object.entries(contracts)) {
+    calls.push(contract.totalUnderlyingMinusSponsored());
+  }
+
+  return await Promise.all(calls);
+}
