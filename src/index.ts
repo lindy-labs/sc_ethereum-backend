@@ -5,20 +5,6 @@ import { Connection } from 'typeorm';
 import { VaultMetric } from './db';
 import getConnection from './db/getConnection';
 
-import {
-  getTotalShares,
-  getTotalUnderlyingMinusSponsored,
-  vaults,
-} from './vault';
-
-getTotalShares(vaults).then((result) => {
-  console.log('getTotalShares result', result);
-});
-
-getTotalUnderlyingMinusSponsored(vaults).then((result) => {
-  console.log('getTotalUnderlyingMinusSponsored result', result);
-});
-
 let connection: Connection;
 
 const server = fastify({

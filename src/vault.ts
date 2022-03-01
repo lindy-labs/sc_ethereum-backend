@@ -1,4 +1,4 @@
-import { Contract, providers } from 'ethers';
+import { BigNumber, Contract, providers } from 'ethers';
 import addressesJson from '../config/addresses.json';
 import vaultABI from '../abis/Vault.json';
 
@@ -25,22 +25,47 @@ function initializeVaults(): Contracts {
 
 export const vaults = initializeVaults();
 
-export async function getTotalShares(contracts: Contracts) {
+export function generateContractCalls(
+  contracts: Contracts,
+  call: string,
+): Promise<any>[] {
   const calls = [];
 
   for (const [_vault, contract] of Object.entries(contracts)) {
-    calls.push(contract.totalShares());
+    calls.push(contract[call]());
   }
 
-  return await Promise.all(calls);
+  return calls;
 }
 
-export async function getTotalUnderlyingMinusSponsored(contracts: Contracts) {
-  const calls = [];
-
-  for (const [_vault, contract] of Object.entries(contracts)) {
-    calls.push(contract.totalUnderlyingMinusSponsored());
+export async function vaultPerformance(
+  totalSharesCalls: Promise<BigNumber>[],
+  totalUnderlyingMinusSponsoredCalls: Promise<BigNumber>[],
+): Promise<BigNumber[]> {
+  if (totalSharesCalls.length !== totalUnderlyingMinusSponsoredCalls.length) {
+    throw 'mismatch between totalSharesCalls and totalUnderlyingMinusSponsoredCalls';
   }
 
-  return await Promise.all(calls);
+  const response = await Promise.allSettled([
+    ...totalSharesCalls,
+    ...totalUnderlyingMinusSponsoredCalls,
+  ]).then((values) => {
+    return values.map((values) => {
+      // When rejected, fall back to BigNumber 0.
+      if (values.status === 'rejected') {
+        return BigNumber.from('0');
+      }
+
+      return values.value;
+    });
+  });
+
+  const vaultTotalShares = response.slice(0, totalSharesCalls.length);
+  const vaultTotalUnderlyingMinusSponsored = response.slice(
+    -totalSharesCalls.length,
+  );
+
+  return vaultTotalShares.map((totalShare: BigNumber, i: number) => {
+    return totalShare.div(vaultTotalUnderlyingMinusSponsored[i]);
+  });
 }
