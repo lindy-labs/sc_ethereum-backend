@@ -8,7 +8,7 @@ export const addresses: {
   [network: string]: { [contractType: string]: { [token: string]: string } };
 } = addressesJson;
 
-export let provider: providers.WebSocketProvider =
+export const provider: providers.WebSocketProvider =
   new providers.WebSocketProvider(
     process.env.RPC_URL || 'http://127.0.0.1:8545',
   );
