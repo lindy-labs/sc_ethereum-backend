@@ -1,10 +1,9 @@
+import fastify from 'fastify';
+import typeorm from 'fastify-typeorm-plugin';
+import { Connection } from 'typeorm';
 
-import fastify from "fastify";
-import typeorm from "fastify-typeorm-plugin";
-import { Connection } from "typeorm";
-
-import { VaultMetric } from "./db";
-import getConnection from "./db/getConnection";
+import { VaultMetric } from './db';
+import getConnection from './db/getConnection';
 
 let connection: Connection;
 
@@ -46,8 +45,8 @@ getConnection().then(async (newConnection) => {
   });
 });
 
-process.on("uncaughtException", (err) => {
-  console.error("uncaught error", err);
+process.on('uncaughtException', (err) => {
+  console.error('uncaught error', err);
 
   Promise.all([connection.close(), server.close()]).then(() => process.exit(1));
 
