@@ -1,3 +1,8 @@
 #!/bin/bash -ue
 
 yarn install
+createdb ethereum_backend_dev || true
+createdb ethereum_backend_test || true
+bin/migrate
+
+echo "Setup completed!"
