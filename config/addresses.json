@@ -1,0 +1,16 @@
+{
+  "ropsten": {
+    "vault": {
+      "UST": "0x135055b3f44c8511d1c2c078c93ba7ff53c8c72e",
+      "USDT": "0x135055B3f44c8511D1c2c078c93BA7ff53c8c72E",
+      "USDC": "0xcEbdBeC07C66ABD29083240DefcDd4837452e2Ab",
+      "DAI": "0x615816ebE7faA3a2b7b0eEb0248e06650Fe31d95"
+    },
+    "strategy": {
+      "UST": "0x0Ac1d08a5F8C535d002b236E0CA9f94822407B04",
+      "USDT": "0xd5984553718867ab6b266220bdda6176ab688f2e",
+      "USDC": "0x5ECdb6E6d0BA18d05b263D49717134ae9bCC2dC3",
+      "DAI": "0xfba53c466935118256981a6BA4f546da766cCdF3"
+    }
+  }
+}
