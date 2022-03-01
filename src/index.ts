@@ -1,4 +1,12 @@
-import fastify from 'fastify';
+
+import fastify from "fastify";
+import typeorm from "fastify-typeorm-plugin";
+import { Connection } from "typeorm";
+
+import { VaultMetric } from "./db";
+import getConnection from "./db/getConnection";
+
+let connection: Connection;
 
 const server = fastify({
   logger: {
@@ -16,11 +24,32 @@ server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
 });
 
-server.listen(process.env.PORT || 8080, (err, address) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  }
+getConnection().then(async (newConnection) => {
+  connection = newConnection;
 
-  server.log.debug(`Server listening at ${address}`);
+  // TEST CODE
+  const vaultMetricsRepo = connection.getRepository(VaultMetric);
+  let allVaultMetrics = await vaultMetricsRepo.find();
+  console.log(allVaultMetrics);
+
+  server.register(typeorm, {
+    connection: newConnection,
+  });
+
+  server.listen(process.env.PORT || 8080, (err, address) => {
+    if (err) {
+      server.log.error(err);
+      process.exit(1);
+    }
+
+    server.log.debug(`Server listening at ${address}`);
+  });
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("uncaught error", err);
+
+  Promise.all([connection.close(), server.close()]).then(() => process.exit(1));
+
+  setTimeout(() => process.abort(), 1000).unref();
 });

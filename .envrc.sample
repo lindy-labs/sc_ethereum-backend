@@ -1,0 +1,2 @@
+export POSTGRESQL_USER=postgres
+export POSTGRESQL_PASSWORD=postgres
