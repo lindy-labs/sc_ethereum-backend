@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import { vaults } from './vault';
 
 const server = fastify({
   logger: {

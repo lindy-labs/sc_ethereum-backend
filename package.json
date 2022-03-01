@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production node build/index.js"
   },
   "dependencies": {
+    "ethers": "^5.5.4",
     "fastify": "^3.27.2",
     "pino-pretty": "^7.5.1"
   },
