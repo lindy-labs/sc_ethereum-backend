@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class VaultMetric {
@@ -11,9 +11,9 @@ export class VaultMetric {
   @Column()
   value: string;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp' })
   updatedAt: Date;
 }

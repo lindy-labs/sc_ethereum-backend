@@ -1,5 +1,5 @@
-import "reflect-metadata";
-import { createConnection, Connection } from "typeorm";
+import 'reflect-metadata';
+import { createConnection, Connection } from 'typeorm';
 
 let connection: Connection;
 

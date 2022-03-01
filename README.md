@@ -23,5 +23,5 @@ bin/migrate
 Run the app:
 
 ```
-bin/serveer
+bin/server
 ```

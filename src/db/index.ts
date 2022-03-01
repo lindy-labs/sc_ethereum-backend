@@ -1,1 +1,1 @@
-export * from "./entities/vaultMetric";
+export * from './entities/vaultMetric';
