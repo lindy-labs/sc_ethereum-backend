@@ -2,9 +2,11 @@ import { Contract } from 'ethers';
 import addressesJson from '../config/addresses.json';
 import vaultABI from '../abis/Vault.json';
 
-const addresses: { [key: string]: any } = addressesJson;
+export type Contracts = { [key: string]: Contract };
 
-type Contracts = { [key: string]: Contract };
+export const addresses: {
+  [key: string]: { [key: string]: { [key: string]: string } };
+} = addressesJson;
 
 function initializeVaults(): Contracts {
   const contracts: Contracts = {};
