@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { BigNumber, Contract, providers } from 'ethers';
 import addressesJson from '../config/addresses.json';
 import vaultABI from '../abis/Vault.json';
@@ -13,29 +14,27 @@ export const provider: providers.WebSocketProvider =
     process.env.RPC_URL || 'http://127.0.0.1:8545',
   );
 
-function initializeVaults(): Contracts {
-  const contracts: Contracts = {};
-
-  for (const [vault, address] of Object.entries(addresses.ropsten.vault)) {
-    contracts[vault] = new Contract(address, vaultABI, provider);
-  }
-
-  return contracts;
-}
-
-export const vaults = initializeVaults();
+export const vaults: Contracts = _.reduce(
+  addresses.ropsten.vault,
+  (memo: Contracts, address, vault) => {
+    memo[vault] = new Contract(address, vaultABI, provider);
+    return memo;
+  },
+  {},
+);
 
 export function generateContractCalls(
   contracts: Contracts,
   call: string,
 ): Promise<any>[] {
-  const calls = [];
-
-  for (const [_vault, contract] of Object.entries(contracts)) {
-    calls.push(contract[call]());
-  }
-
-  return calls;
+  return _.reduce(
+    contracts,
+    (memo: Promise<any>[], contract) => {
+      memo.push(contract[call]);
+      return memo;
+    },
+    [],
+  );
 }
 
 export async function vaultPerformance(
