@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { reduce, drop, dropRight } from 'lodash';
 import { BigNumber, Contract, providers } from 'ethers';
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
@@ -6,7 +6,7 @@ import { abi as vaultABI } from './abis/Vault';
 export type Contracts = { [key: string]: Contract };
 
 function contractCalls(contracts: Contracts, call: string): Promise<any>[] {
-  return _.reduce(
+  return reduce(
     contracts,
     (memo: Promise<any>[], contract) => {
       memo.push(contract[call]());
@@ -20,7 +20,7 @@ const provider: providers.WebSocketProvider = new providers.WebSocketProvider(
   process.env.RPC_URL || 'http://127.0.0.1:8545',
 );
 
-export const vaults: Contracts = _.reduce(
+export const vaults: Contracts = reduce(
   addresses.ropsten.vault,
   (memo: Contracts, address: string, vault: string) => {
     memo[vault] = new Contract(address, vaultABI, provider);
@@ -44,10 +44,10 @@ export async function vaultPerformance(): Promise<BigNumber[]> {
     return values.value;
   });
 
-  const vaultTotalShares = metrics.slice(0, metrics.length);
-  const vaultTotalUnderlyingMinusSponsored = metrics.slice(-metrics.length);
+  const shares = dropRight(metrics, metrics.length / 2);
+  const underlying = drop(metrics, metrics.length / 2);
 
-  return vaultTotalShares.map((totalShare: BigNumber, i: number) =>
-    totalShare.div(vaultTotalUnderlyingMinusSponsored[i]),
+  return shares.map((totalShare: BigNumber, i: number) =>
+    totalShare.div(underlying[i]),
   );
 }
