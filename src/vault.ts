@@ -1,13 +1,9 @@
 import _ from 'lodash';
 import { BigNumber, Contract, providers } from 'ethers';
-import addressesJson from '../config/addresses.json';
-import vaultABI from '../abis/Vault.json';
+import { addresses } from './config/addresses';
+import { abi as vaultABI } from './abis/Vault';
 
 export type Contracts = { [key: string]: Contract };
-
-const addresses: {
-  [network: string]: { [contractType: string]: { [token: string]: string } };
-} = addressesJson;
 
 function contractCalls(contracts: Contracts, call: string): Promise<any>[] {
   return _.reduce(
