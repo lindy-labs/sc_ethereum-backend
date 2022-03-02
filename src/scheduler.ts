@@ -18,7 +18,6 @@ export async function initSchedule() {
 }
 
 async function scheduledJobs() {
-  // Repeat job once every day at 3:15 (am)
   await myQueue.add(
     'job-name',
     { some: 'data' },
