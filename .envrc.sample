@@ -1,3 +1,5 @@
 export POSTGRESQL_USER=postgres
 export POSTGRESQL_PASSWORD=postgres
 export RPC_URL=ws://your-rpc-url
+export REDIS_HOST=127.0.0.1
+export REDIS_PORT=6379
