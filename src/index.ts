@@ -4,6 +4,7 @@ import { Connection } from 'typeorm';
 
 import { VaultMetric } from './db';
 import getConnection from './db/getConnection';
+import { initSchedule } from './scheduler';
 
 let connection: Connection;
 
@@ -42,6 +43,8 @@ getConnection().then(async (newConnection) => {
     }
 
     server.log.debug(`Server listening at ${address}`);
+
+    initSchedule();
   });
 });
 
