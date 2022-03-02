@@ -4,7 +4,7 @@ import vaultABI from '../abis/Vault.json';
 
 export type Contracts = { [key: string]: Contract };
 
-export const addresses: {
+const addresses: {
   [network: string]: { [contractType: string]: { [token: string]: string } };
 } = addressesJson;
 
