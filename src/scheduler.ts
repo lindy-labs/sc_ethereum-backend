@@ -14,8 +14,8 @@ new QueueScheduler(queueName, options);
 const myQueue = new Queue(queueName, options);
 
 export function initSchedule() {
-  scheduleJobs();
   work();
+  scheduleJobs();
 }
 
 function scheduleJobs() {

@@ -1,4 +1,4 @@
-import { reduce, drop, dropRight } from 'lodash';
+import { reduce, drop, dropRight, mapValues } from 'lodash';
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
@@ -57,5 +57,5 @@ export async function vaultPerformances(): Promise<BigNumber[]> {
 }
 
 export async function updateInvested() {
-  Object.values(vaults).forEach((vault: Contract) => vault.updateInvested());
+  mapValues(vaults, (vault) => vault.updateInvested());
 }
