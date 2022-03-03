@@ -21,7 +21,7 @@ const provider: providers.WebSocketProvider = new providers.WebSocketProvider(
 );
 
 const wallet: Wallet = Wallet.fromMnemonic(
-  process.env.WALLET_MNEMONIC || '',
+  process.env.WALLET_MNEMONIC as string,
 ).connect(provider);
 
 export const vaults: Contracts = reduce(
