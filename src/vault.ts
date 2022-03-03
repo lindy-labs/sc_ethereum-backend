@@ -29,7 +29,7 @@ export const vaults: Contracts = reduce(
   {},
 );
 
-export async function vaultPerformance(): Promise<BigNumber[]> {
+export async function vaultPerformances(): Promise<BigNumber[]> {
   const response = await Promise.allSettled([
     ...contractCalls(vaults, 'totalShares'),
     ...contractCalls(vaults, 'totalUnderlyingMinusSponsored'),

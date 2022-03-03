@@ -13,11 +13,11 @@ new QueueScheduler(queueName, options);
 const myQueue = new Queue(queueName, options);
 
 export async function initSchedule() {
-  await scheduledJobs();
+  await scheduleJobs();
   work();
 }
 
-async function scheduledJobs() {
+async function scheduleJobs() {
   await myQueue.add(
     'job-name',
     { some: 'data' },
