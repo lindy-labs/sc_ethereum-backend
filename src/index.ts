@@ -36,7 +36,7 @@ getConnection().then(async (newConnection) => {
     connection: newConnection,
   });
 
-  server.listen(process.env.PORT || 8080, async (err, address) => {
+  server.listen(process.env.PORT || 8080, (err, address) => {
     if (err) {
       server.log.error(err);
       process.exit(1);
