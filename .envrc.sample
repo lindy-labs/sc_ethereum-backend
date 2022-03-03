@@ -3,5 +3,4 @@ export POSTGRESQL_PASSWORD=postgres
 export RPC_URL=ws://your-rpc-url
 export REDIS_HOST=127.0.0.1
 export REDIS_PORT=6379
-export WALLET_KEY=the-private-key
-export WALLET_ADDRESS=the-public-key
+export WALLET_MNEMONIC=the mnemonic words and such

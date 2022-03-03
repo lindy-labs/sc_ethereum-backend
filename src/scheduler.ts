@@ -1,4 +1,5 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
+import { updateInvested } from './vault';
 
 const queueName = 'Queue';
 
@@ -18,23 +19,22 @@ export async function initSchedule() {
 }
 
 async function scheduleJobs() {
-  await myQueue.add(
-    'job-name',
-    { some: 'data' },
-    {
-      repeat: {
-        cron: '* * * * * *',
-      },
+  await myQueue.add('updateInvested', null, {
+    repeat: {
+      cron: '0 12 * * * *',
     },
-  );
+  });
 }
 
 async function work() {
   new Worker(
     queueName,
     async (job: Job) => {
-      console.log('job name', job.name);
-      console.log('job data', job.data);
+      switch (job.name) {
+        case 'updateInvested':
+          updateInvested();
+          break;
+      }
     },
     options,
   );
