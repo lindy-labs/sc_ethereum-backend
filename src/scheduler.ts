@@ -13,21 +13,21 @@ const options = {
 new QueueScheduler(queueName, options);
 const myQueue = new Queue(queueName, options);
 
-export async function initSchedule() {
-  await scheduleJobs();
+export function initSchedule() {
+  scheduleJobs();
   work();
 }
 
-async function scheduleJobs() {
-  await myQueue.add('updateInvested', null, {
+function scheduleJobs() {
+  myQueue.add('updateInvested', null, {
     repeat: {
       cron: '0 12 * * * *',
     },
   });
 }
 
-async function work() {
-  new Worker(
+function work() {
+  const worker = new Worker(
     queueName,
     async (job: Job) => {
       switch (job.name) {
@@ -38,4 +38,12 @@ async function work() {
     },
     options,
   );
+
+  worker.on('completed', (job: Job, err: Error) => {
+    console.log(`${job.id} has been completed!`);
+  });
+
+  worker.on('failed', (job: Job, err: Error) => {
+    console.error(`${job.id} has failed with ${err.message}`);
+  });
 }
