@@ -1,4 +1,5 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
+import { server } from './server';
 import { updateInvested } from './vault';
 
 const queueName = 'Queue';
@@ -40,10 +41,10 @@ function work() {
   );
 
   worker.on('completed', (job: Job, err: Error) => {
-    console.log(`${job.id} has been completed!`);
+    server.log.debug(`${job.id} has been completed!`);
   });
 
   worker.on('failed', (job: Job, err: Error) => {
-    console.error(`${job.id} has failed with ${err.message}`);
+    server.log.error(`${job.id} has failed with ${err.message}`);
   });
 }
