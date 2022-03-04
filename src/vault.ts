@@ -33,7 +33,7 @@ export const vaults: Contracts = reduce(
   {},
 );
 
-export async function vaultPerformances(): Promise<BigNumber[]> {
+export async function vaultPerformances(): Promise<string[]> {
   const response = await Promise.allSettled([
     ...contractCalls(vaults, 'totalShares'),
     ...contractCalls(vaults, 'totalUnderlyingMinusSponsored'),
@@ -52,7 +52,7 @@ export async function vaultPerformances(): Promise<BigNumber[]> {
   const underlying = drop(metrics, metrics.length / 2);
 
   return shares.map((totalShare: BigNumber, i: number) =>
-    totalShare.div(underlying[i]),
+    totalShare.div(underlying[i]).toString(),
   );
 }
 

@@ -5,6 +5,8 @@ import { server } from './server';
 import { VaultMetric } from './db';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
+import { vaultPerformances } from './vault';
+import { collectMetrics } from './services/vaultMetric';
 
 let connection: Connection;
 
@@ -14,11 +16,6 @@ server.get('/ping', async (_request, _reply) => {
 
 getConnection().then(async (newConnection) => {
   connection = newConnection;
-
-  // TEST CODE
-  const vaultMetricsRepo = connection.getRepository(VaultMetric);
-  let allVaultMetrics = await vaultMetricsRepo.find();
-  console.log(allVaultMetrics);
 
   server.register(typeorm, {
     connection: newConnection,
@@ -33,6 +30,8 @@ getConnection().then(async (newConnection) => {
     server.log.debug(`Server listening at ${address}`);
 
     initSchedule();
+
+    collectMetrics('vault_performance', vaultPerformances);
   });
 });
 
