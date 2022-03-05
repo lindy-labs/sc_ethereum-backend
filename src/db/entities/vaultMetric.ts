@@ -14,6 +14,6 @@ export class VaultMetric {
   @Column({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: true })
   updatedAt: Date;
 }

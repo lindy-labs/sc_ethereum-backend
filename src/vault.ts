@@ -51,9 +51,13 @@ export async function vaultPerformances(): Promise<string[]> {
   const shares = dropRight(metrics, metrics.length / 2);
   const underlying = drop(metrics, metrics.length / 2);
 
-  return shares.map((totalShare: BigNumber, i: number) =>
-    totalShare.div(underlying[i]).toString(),
-  );
+  return shares.map((totalShare: BigNumber, i: number) => {
+    try {
+      return totalShare.div(underlying[i]).toString();
+    } catch(e) {
+      return '0';
+    }
+  });
 }
 
 export async function updateInvested() {

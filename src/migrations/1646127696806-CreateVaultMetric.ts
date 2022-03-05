@@ -1,47 +1,50 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 export class CreateVaultMetric1646127696806 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: "vault_metric",
+        name: 'vault_metric',
         columns: [
           {
-            name: "id",
-            type: "int",
+            name: 'id',
+            type: 'int',
             isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
           },
           {
-            name: "key",
-            type: "varchar",
+            name: 'key',
+            type: 'varchar',
           },
           {
-            name: "value",
-            type: "varchar",
+            name: 'value',
+            type: 'varchar',
           },
           {
-            name: "createdAt",
-            type: "timestamp",
-            default: "now()",
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'now()',
           },
           {
-            name: "updatedAt",
-            type: "timestamp",
+            name: 'updatedAt',
+            type: 'timestamp',
+            isNullable: true,
           },
         ],
-      })
+      }),
     );
 
     await queryRunner.createIndex(
-      "vault_metric",
+      'vault_metric',
       new TableIndex({
-        name: "vault_metric_timestamp",
-        columnNames: ["updatedAt"],
-      })
+        name: 'vault_metric_timestamp',
+        columnNames: ['updatedAt'],
+      }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable("vault_metric", true, true, true);
+    await queryRunner.dropTable('vault_metric', true, true, true);
   }
 }
