@@ -1,3 +1,0 @@
-#!/bin/bash -ue
-
-docker-compose exec redis redis-cli flushall
