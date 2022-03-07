@@ -1,23 +1,12 @@
-import fastify from 'fastify';
 import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
+import { server } from './server';
 import { VaultMetric } from './db';
 import getConnection from './db/getConnection';
+import { initSchedule } from './scheduler';
 
 let connection: Connection;
-
-const server = fastify({
-  logger: {
-    prettyPrint:
-      process.env.NODE_ENV !== 'development'
-        ? {
-            translateTime: 'HH:MM:ss Z',
-            ignore: 'pid,hostname',
-          }
-        : false,
-  },
-});
 
 server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
@@ -42,6 +31,8 @@ getConnection().then(async (newConnection) => {
     }
 
     server.log.debug(`Server listening at ${address}`);
+
+    initSchedule();
   });
 });
 

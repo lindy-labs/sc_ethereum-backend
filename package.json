@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "bullmq": "^1.76.0",
     "ethers": "^5.5.4",
     "fastify": "^3.27.2",
     "fastify-typeorm-plugin": "^2.2.0",
