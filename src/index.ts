@@ -2,7 +2,6 @@ import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
 import { server } from './server';
-import { VaultMetric } from './db';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
 import { vaultPerformances } from './vault';

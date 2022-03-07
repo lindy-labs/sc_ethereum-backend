@@ -1,5 +1,6 @@
 import { reduce, drop, dropRight, mapValues } from 'lodash';
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
+
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
 

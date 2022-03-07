@@ -1,0 +1,4 @@
+#!/bin/bash -ue
+
+docker-compose up -d --force-recreate db
+docker-compose up -d --force-recreate -V redis
