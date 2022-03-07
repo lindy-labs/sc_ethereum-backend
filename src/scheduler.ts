@@ -1,7 +1,8 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 
 import { server } from './server';
-import { updateInvested } from './vault';
+import { updateInvested, vaultPerformances } from './vault';
+import { collectMetrics } from './services/vaultMetric';
 
 const QUEUE_NAME = 'Queue';
 
@@ -23,7 +24,13 @@ export function initSchedule() {
 function scheduleJobs() {
   queue.add('updateInvested', null, {
     repeat: {
-      cron: '0 0 12 * * *',
+      cron: '0 0 12 * * *', // noon
+    },
+  });
+
+  queue.add('vaultPerformance', null, {
+    repeat: {
+      cron: '0 0 0 * * *', // midnight
     },
   });
 }
@@ -35,6 +42,9 @@ function initWorker() {
       switch (job.name) {
         case 'updateInvested':
           updateInvested();
+          break;
+        case 'vaultPerformance':
+          collectMetrics('vault_performance', vaultPerformances);
           break;
       }
     },

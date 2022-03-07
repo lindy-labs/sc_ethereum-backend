@@ -4,8 +4,6 @@ import { Connection } from 'typeorm';
 import { server } from './server';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
-import { vaultPerformances } from './vault';
-import { collectMetrics } from './services/vaultMetric';
 
 let connection: Connection;
 
@@ -29,15 +27,15 @@ getConnection().then(async (newConnection) => {
     server.log.debug(`Server listening at ${address}`);
 
     initSchedule();
-
-    collectMetrics('vault_performance', vaultPerformances);
   });
 });
 
 process.on('uncaughtException', (err) => {
   console.error('uncaught error', err);
 
-  Promise.all([connection.close(), server.close()]).then(() => process.exit(1));
+  if (connection.isConnected) {
+    Promise.all([connection.close(), server.close()]).then(() => process.exit(1));
+  }
 
   setTimeout(() => process.abort(), 1000).unref();
 });
