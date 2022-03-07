@@ -25,9 +25,3 @@ Run the app:
 ```
 bin/server
 ```
-
-### Bullmq
-
-Bullmq is used with redis for scheduled jobs. When changing job name in `.src/scheduler.ts` module the old job will keep being scheduled.
-To clear the job from the schedule either flush Redis with the `FLUSHALL` command, drop the volume with the docker-compose `-V` flag or
-recreate the container with `docker-compose down && docker-compose up -d` or rebuild entirely with `docker-compose up -d --build --force-recreate redis`.
