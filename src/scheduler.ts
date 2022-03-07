@@ -2,7 +2,7 @@ import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 import { server } from './server';
 import { updateInvested } from './vault';
 
-const queueName = 'Queue';
+const QUEUE_NAME = 'Queue';
 
 const options = {
   connection: {
@@ -11,25 +11,25 @@ const options = {
   },
 };
 
-new QueueScheduler(queueName, options);
-const myQueue = new Queue(queueName, options);
+new QueueScheduler(QUEUE_NAME, options);
+const queue = new Queue(QUEUE_NAME, options);
 
 export function initSchedule() {
-  work();
+  initWorker();
   scheduleJobs();
 }
 
 function scheduleJobs() {
-  myQueue.add('updateInvested', null, {
+  queue.add('updateInvested', null, {
     repeat: {
       cron: '0 0 12 * * *',
     },
   });
 }
 
-function work() {
+function initWorker() {
   const worker = new Worker(
-    queueName,
+    QUEUE_NAME,
     async (job: Job) => {
       switch (job.name) {
         case 'updateInvested':
