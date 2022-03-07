@@ -1,8 +1,7 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
+import { QUEUE_NAME } from './config/constants';
 import { server } from './server';
 import { updateInvested } from './vault';
-
-const QUEUE_NAME = 'Queue';
 
 const options = {
   connection: {
