@@ -14,10 +14,12 @@ export async function collectMetric(key: string, fn: () => Promise<string>) {
 export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
   const values = await fn();
 
-  const vaultMetrics = values.map(value => vaultMetricsRep.create({
-    key,
-    value,
-  }));
+  const vaultMetrics = values.map((value) =>
+    vaultMetricsRep.create({
+      key,
+      value,
+    }),
+  );
 
   vaultMetricsRep.save(vaultMetrics);
 }
