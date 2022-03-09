@@ -8,7 +8,7 @@ export async function collectMetric(key: string, fn: () => Promise<string>) {
     value,
   });
 
-  vaultMetricsRep.save(vaultMetric);
+  await vaultMetricsRep.save(vaultMetric);
 }
 
 export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
@@ -21,5 +21,5 @@ export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
     }),
   );
 
-  vaultMetricsRep.save(vaultMetrics);
+  await vaultMetricsRep.save(vaultMetrics);
 }

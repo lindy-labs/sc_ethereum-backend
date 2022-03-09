@@ -41,10 +41,10 @@ function initWorker() {
     async (job: Job) => {
       switch (job.name) {
         case 'updateInvested':
-          updateInvested();
+          await updateInvested();
           break;
         case 'vaultPerformance':
-          collectMetrics('vault_performance', vaultPerformances);
+          await collectMetrics('vault_performance', vaultPerformances);
           break;
       }
     },
@@ -52,7 +52,7 @@ function initWorker() {
   );
 
   worker.on('completed', (job: Job, err: Error) => {
-    server.log.debug(`${job.id} has been completed!`);
+    server.log.info(`${job.id} has been completed!`);
   });
 
   worker.on('failed', (job: Job, err: Error) => {

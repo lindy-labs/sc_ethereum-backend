@@ -34,7 +34,9 @@ process.on('uncaughtException', (err) => {
   console.error('uncaught error', err);
 
   if (connection.isConnected) {
-    Promise.all([connection.close(), server.close()]).then(() => process.exit(1));
+    Promise.all([connection.close(), server.close()]).then(() =>
+      process.exit(1),
+    );
   }
 
   setTimeout(() => process.abort(), 1000).unref();
