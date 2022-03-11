@@ -7,7 +7,7 @@ import { abi as anchorUSTStratABI } from './abis/AnchorUSTStrategy';
 import { abi as anchorNonUSTStratABI } from './abis/AnchorNonUSTStrategy';
 
 export const strategies: Contracts = reduce(
-  addresses.ropsten.vault,
+  addresses.ropsten.strategy,
   (memo: Contracts, address: string, strategy: string) => {
     let contract = new Contract(address, anchorNonUSTStratABI, wallet);
     if (strategy === 'UST') {
