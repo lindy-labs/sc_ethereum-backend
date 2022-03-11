@@ -1,10 +1,9 @@
 import { reduce, drop, dropRight, mapValues } from 'lodash';
-import { BigNumber, Contract, providers, Wallet } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
-
-export type Contracts = { [key: string]: Contract };
+import { Contracts, wallet } from './provider';
 
 function contractCalls(contracts: Contracts, call: string): Promise<any>[] {
   return reduce(
@@ -16,14 +15,6 @@ function contractCalls(contracts: Contracts, call: string): Promise<any>[] {
     [],
   );
 }
-
-const provider: providers.WebSocketProvider = new providers.WebSocketProvider(
-  process.env.RPC_URL || 'http://127.0.0.1:8545',
-);
-
-const wallet: Wallet = Wallet.fromMnemonic(
-  process.env.WALLET_MNEMONIC as string,
-).connect(provider);
 
 export const vaults: Contracts = reduce(
   addresses.ropsten.vault,
