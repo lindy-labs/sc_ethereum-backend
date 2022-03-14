@@ -5,6 +5,7 @@ import { addresses } from './config/addresses';
 import { Contracts, wallet } from './provider';
 import { abi as anchorUSTStratABI } from './abis/AnchorUSTStrategy';
 import { abi as anchorNonUSTStratABI } from './abis/AnchorNonUSTStrategy';
+import { server } from './server';
 
 export const strategies: Contracts = reduce(
   addresses.ropsten.strategy,
@@ -30,11 +31,15 @@ export function listenInitDepositRedeem() {
         ustAmount: number,
       ) => {
         // Begin tracking operator address
+        server.log.info(
+          `operator: ${operator} idx: ${idx} underlyingAmount: ${underlyingAmount} ustAmount: ${ustAmount}`,
+        );
       },
     );
 
     strategy.on('InitRedeemStable', (operator: string, aUstAmount: number) => {
       // Begin tracking operator address
+      server.log.info(`operator: ${operator} aUstAmount: ${aUstAmount}`);
     });
   });
 }
