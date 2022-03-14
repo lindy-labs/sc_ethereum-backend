@@ -1,5 +1,6 @@
 import { reduce, drop, dropRight, mapValues } from 'lodash';
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
+
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
 
@@ -51,9 +52,13 @@ export async function vaultPerformances(): Promise<BigNumber[]> {
   const shares = dropRight(metrics, metrics.length / 2);
   const underlying = drop(metrics, metrics.length / 2);
 
-  return shares.map((totalShare: BigNumber, i: number) =>
-    totalShare.div(underlying[i]),
-  );
+  return shares.map((totalShare: BigNumber, i: number) => {
+    try {
+      return totalShare.div(underlying[i]);
+    } catch (_e) {
+      return BigNumber.from('0');
+    }
+  });
 }
 
 export async function updateInvested() {

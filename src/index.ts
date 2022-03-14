@@ -2,9 +2,9 @@ import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
 import { server } from './server';
-import { VaultMetric } from './db';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
+import { initRepos } from './db';
 
 let connection: Connection;
 
@@ -14,11 +14,6 @@ server.get('/ping', async (_request, _reply) => {
 
 getConnection().then(async (newConnection) => {
   connection = newConnection;
-
-  // TEST CODE
-  const vaultMetricsRepo = connection.getRepository(VaultMetric);
-  let allVaultMetrics = await vaultMetricsRepo.find();
-  console.log(allVaultMetrics);
 
   server.register(typeorm, {
     connection: newConnection,
@@ -32,6 +27,8 @@ getConnection().then(async (newConnection) => {
 
     server.log.debug(`Server listening at ${address}`);
 
+    initRepos();
+
     initSchedule();
   });
 });
@@ -39,7 +36,9 @@ getConnection().then(async (newConnection) => {
 process.on('uncaughtException', (err) => {
   console.error('uncaught error', err);
 
-  Promise.all([connection.close(), server.close()]).then(() => process.exit(1));
+  Promise.all([connection.close(), server.close()]).finally(() =>
+    process.exit(1),
+  );
 
   setTimeout(() => process.abort(), 1000).unref();
 });
