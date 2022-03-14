@@ -1,4 +1,4 @@
-import { repository } from '../db/repositories/vaultMetric';
+import repository from '../db/repositories/vaultMetric';
 
 export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
   const values = await fn();
