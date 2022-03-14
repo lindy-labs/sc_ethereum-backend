@@ -4,6 +4,7 @@ import { Connection } from 'typeorm';
 import { server } from './server';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
+import { initRepos } from './db';
 
 let connection: Connection;
 
@@ -26,6 +27,8 @@ getConnection().then(async (newConnection) => {
 
     server.log.debug(`Server listening at ${address}`);
 
+    initRepos();
+
     initSchedule();
   });
 });
@@ -33,11 +36,9 @@ getConnection().then(async (newConnection) => {
 process.on('uncaughtException', (err) => {
   console.error('uncaught error', err);
 
-  if (connection.isConnected) {
-    Promise.all([connection.close(), server.close()]).then(() =>
-      process.exit(1),
-    );
-  }
+  Promise.all([connection.close(), server.close()]).finally(() =>
+    process.exit(1),
+  );
 
   setTimeout(() => process.abort(), 1000).unref();
 });
