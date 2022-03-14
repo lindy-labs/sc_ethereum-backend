@@ -1,6 +1,7 @@
 import repository from '../db/repositories/vaultMetric';
+import { vaultPerformances } from '../vault';
 
-export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
+async function collectMetrics(key: string, fn: () => Promise<string[]>) {
   const values = await fn();
 
   const vaultMetrics = values.map((value) =>
@@ -11,4 +12,8 @@ export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
   );
 
   await repository.save(vaultMetrics);
+}
+
+export async function collectVaultPerformances() {
+  await collectMetrics('vault_performance', vaultPerformances);
 }
