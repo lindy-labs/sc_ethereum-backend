@@ -23,16 +23,18 @@ export function listenInitDepositRedeem() {
   mapValues(strategies, (strategy: Contract) => {
     strategy.on(
       'InitDepositStable',
-      (operator, idx, underlyingAmount, ustAmount) => {
+      (
+        operator: string,
+        idx: number,
+        underlyingAmount: number,
+        ustAmount: number,
+      ) => {
         // Begin tracking operator address
       },
     );
 
-    strategy.on(
-      'InitRedeemStable',
-      (operator, aUstAmount, underlyingAmount, ustAmount) => {
-        // Begin tracking operator address
-      },
-    );
+    strategy.on('InitRedeemStable', (operator: string, aUstAmount: number) => {
+      // Begin tracking operator address
+    });
   });
 }
