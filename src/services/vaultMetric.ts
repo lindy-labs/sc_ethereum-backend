@@ -1,25 +1,14 @@
-import { vaultMetricsRep } from '../db/repositories/vaultMetric';
-
-export async function collectMetric(key: string, fn: () => Promise<string>) {
-  const value = await fn();
-
-  const vaultMetric = vaultMetricsRep.create({
-    key,
-    value,
-  });
-
-  await vaultMetricsRep.save(vaultMetric);
-}
+import { repository } from '../db/repositories/vaultMetric';
 
 export async function collectMetrics(key: string, fn: () => Promise<string[]>) {
   const values = await fn();
 
   const vaultMetrics = values.map((value) =>
-    vaultMetricsRep.create({
+    repository.create({
       key,
       value,
     }),
   );
 
-  await vaultMetricsRep.save(vaultMetrics);
+  await repository.save(vaultMetrics);
 }

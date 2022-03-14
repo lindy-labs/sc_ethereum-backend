@@ -4,6 +4,7 @@ import { Connection } from 'typeorm';
 import { server } from './server';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
+import { initRepos } from './db';
 
 let connection: Connection;
 
@@ -25,6 +26,8 @@ getConnection().then(async (newConnection) => {
     }
 
     server.log.debug(`Server listening at ${address}`);
+
+    initRepos();
 
     initSchedule();
   });
