@@ -55,7 +55,7 @@ export async function vaultPerformances(): Promise<BigNumber[]> {
   return shares.map((totalShare: BigNumber, i: number) => {
     try {
       return totalShare.div(underlying[i]);
-    } catch (e) {
+    } catch (_e) {
       return BigNumber.from('0');
     }
   });
