@@ -2,7 +2,7 @@ import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 
 import { server } from './server';
 import { collectVaultPerformances } from './services/vaultMetric';
-import { updateInvested, vaultPerformances } from './vault';
+import { updateInvested } from './vault';
 
 const QUEUE_NAME = 'Queue';
 
