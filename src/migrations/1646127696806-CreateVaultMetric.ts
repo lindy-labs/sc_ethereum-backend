@@ -29,7 +29,7 @@ export class CreateVaultMetric1646127696806 implements MigrationInterface {
           {
             name: 'updatedAt',
             type: 'timestamp',
-            isNullable: true,
+            default: 'now()',
           },
         ],
       }),
