@@ -1,4 +1,4 @@
-import { providers, Wallet } from 'ethers';
+import { Contract, providers, Wallet } from 'ethers';
 
 export type Contracts = { [key: string]: Contract };
 
