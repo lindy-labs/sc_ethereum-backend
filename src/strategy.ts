@@ -1,5 +1,5 @@
 import { Contract } from 'ethers';
-import { reduce } from 'lodash';
+import { mapValues, reduce } from 'lodash';
 
 import { addresses } from './config/addresses';
 import { Contracts, wallet } from './provider';
@@ -18,3 +18,21 @@ export const strategies: Contracts = reduce(
   },
   {},
 );
+
+export function listenInitDepositRedeem() {
+  mapValues(strategies, (strategy: Contract) => {
+    strategy.on(
+      'InitDepositStable',
+      (operator, idx, underlyingAmount, ustAmount) => {
+        // Begin tracking operator address
+      },
+    );
+
+    strategy.on(
+      'InitRedeemStable',
+      (operator, aUstAmount, underlyingAmount, ustAmount) => {
+        // Begin tracking operator address
+      },
+    );
+  });
+}
