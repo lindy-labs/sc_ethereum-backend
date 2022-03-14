@@ -1,8 +1,8 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 
 import { server } from './server';
+import { collectVaultPerformances } from './services/vaultMetric';
 import { updateInvested, vaultPerformances } from './vault';
-import { collectMetrics } from './services/vaultMetric';
 
 const QUEUE_NAME = 'Queue';
 
@@ -44,7 +44,7 @@ function initWorker() {
           await updateInvested();
           break;
         case 'vaultPerformance':
-          await collectMetrics('vault_performance', vaultPerformances);
+          await collectVaultPerformances();
           break;
       }
     },
