@@ -4,17 +4,7 @@ import { BigNumber, Contract } from 'ethers';
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
 import { Contracts, wallet } from './provider';
-
-function contractCalls(contracts: Contracts, call: string): Promise<any>[] {
-  return reduce(
-    contracts,
-    (memo: Promise<any>[], contract) => {
-      memo.push(contract[call]());
-      return memo;
-    },
-    [],
-  );
-}
+import { contractCalls } from './contractHelper';
 
 export const vaults: Contracts = reduce(
   addresses.ropsten.vault,

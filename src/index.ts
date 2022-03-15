@@ -5,6 +5,7 @@ import { server } from './server';
 import getConnection from './db/getConnection';
 import { initSchedule } from './scheduler';
 import { initRepos } from './db';
+import { depositOperations } from './strategy';
 
 let connection: Connection;
 
@@ -30,6 +31,8 @@ getConnection().then(async (newConnection) => {
     initRepos();
 
     initSchedule();
+
+    depositOperations();
   });
 });
 
