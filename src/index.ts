@@ -12,27 +12,25 @@ server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
 });
 
-getConnection()
-  .then(async (newConnection) => {
-    connection = newConnection;
+getConnection().then(async (newConnection) => {
+  connection = newConnection;
 
-    server.register(typeorm, {
-      connection: newConnection!,
-    });
+  server.register(typeorm, {
+    connection: newConnection!,
+  });
 
-    server.listen(process.env.PORT || 8080, '0.0.0.0', (err, address) => {
-      if (err) {
-        server.log.error(err);
-        process.exit(1);
-      }
+  server.listen(process.env.PORT || 8080, '0.0.0.0', (err, address) => {
+    if (err) {
+      server.log.error(err);
+      process.exit(1);
+    }
 
-      server.log.debug(`Server listening at ${address}`);
+    server.log.debug(`Server listening at ${address}`);
 
-      initRepos();
-      // initSchedule();
-    });
-  })
-  .catch(console.error);
+    initRepos();
+    // initSchedule();
+  });
+});
 
 function handleExit(code?: number) {
   console.log('closing');
