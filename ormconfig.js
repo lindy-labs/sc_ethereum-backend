@@ -19,9 +19,7 @@ if (databaseURL) {
   module.exports = _.extend(
     {
       url: databaseURL || 'localhost',
-      extra: {
-        ssl: true,
-      },
+      ssl: true,
     },
     opts,
   );
