@@ -20,6 +20,11 @@ if (databaseURL) {
     {
       url: databaseURL || 'localhost',
       ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     },
     opts,
   );
