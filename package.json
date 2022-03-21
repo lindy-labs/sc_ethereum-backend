@@ -7,8 +7,7 @@
     "dev": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/index.ts",
     "build": "tsc",
     "start": "NODE_ENV=production node build/index.js",
-    "test": "jest",
-    "postinstall": "yarn run build"
+    "test": "jest"
   },
   "dependencies": {
     "bullmq": "^1.76.0",
