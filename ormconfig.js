@@ -9,7 +9,7 @@ const opts = {
   entities: [__dirname + `/${baseFolder}/db/entities/*.{ts,js}`],
   synchronize: process.env.NODE_ENV === 'test',
   logging: false,
-  migrations: [`${baseFolder}/migrations/*.ts`],
+  migrations: [`${baseFolder}/migrations/*.{ts,js}`],
   cli: {
     migrationsDir: `${baseFolder}/migrations`,
   },
