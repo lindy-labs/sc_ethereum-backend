@@ -1,0 +1,6 @@
+#!/bin/bash
+
+dropdb ethereum_backend_dev || true
+dropdb ethereum_backend_test || true
+
+bin/setup

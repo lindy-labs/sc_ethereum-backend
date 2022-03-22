@@ -10,7 +10,7 @@ export const getVaultMetricRepository = async () => {
 
 export const getJobRepository = async () => {
   const connection = await getConnection();
-  return connection.getRepository(VaultMetric);
+  return connection.getRepository(Job);
 };
 
 export { VaultMetric, Job };
