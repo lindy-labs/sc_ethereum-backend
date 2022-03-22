@@ -1,43 +1,29 @@
 import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
-import { server } from './server';
-import getConnection from './db/getConnection';
-// import { initSchedule } from './scheduler';
-import { initRepos } from './db';
+import * as API from './api';
+import getDBConnection from './db/getConnection';
+import * as Scheduler from './scheduler';
 
 let connection: Connection;
 
-server.get('/ping', async (_request, _reply) => {
-  return 'pong\n';
-});
-
-getConnection().then(async (newConnection) => {
+getDBConnection().then(async (newConnection) => {
   connection = newConnection;
 
-  server.register(typeorm, {
-    connection: newConnection!,
-  });
+  API.server.register(typeorm, { connection: newConnection! });
 
-  server.listen(process.env.PORT || 8080, '0.0.0.0', (err, address) => {
-    if (err) {
-      server.log.error(err);
-      process.exit(1);
-    }
-
-    server.log.debug(`Server listening at ${address}`);
-
-    initRepos();
-    // initSchedule();
-  });
+  await Scheduler.start();
+  await API.start();
 });
 
 function handleExit(code?: number) {
   console.log('closing');
 
-  Promise.all([connection.close(), server.close()]).finally(() =>
-    process.exit(code || 0),
-  );
+  Promise.all([
+    connection?.close(),
+    API.server.close(),
+    Scheduler.stop(),
+  ]).finally(() => process.exit(code || 0));
 
   setTimeout(() => process.abort(), 1000).unref();
 }

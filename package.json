@@ -10,12 +10,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "bullmq": "^1.76.0",
+    "bullmq": "^1.77.3",
     "ethers": "^5.5.4",
     "fastify": "^3.27.2",
     "fastify-typeorm-plugin": "^2.2.0",
     "lodash": "^4.17.21",
     "pg": "^8.7.3",
+    "pino": "^7.9.1",
     "pino-pretty": "^7.5.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.44"

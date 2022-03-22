@@ -1,6 +1,16 @@
-export * from './entities/vaultMetric';
-import { init as initVaultMetricRepository } from './repositories/vaultMetric';
+import { VaultMetric } from './entities/vaultMetric';
+import { Job } from './entities/job';
 
-export function initRepos() {
-  initVaultMetricRepository();
-}
+import getConnection from './getConnection';
+
+export const getVaultMetricRepository = async () => {
+  const connection = await getConnection();
+  return connection.getRepository(VaultMetric);
+};
+
+export const getJobRepository = async () => {
+  const connection = await getConnection();
+  return connection.getRepository(VaultMetric);
+};
+
+export { VaultMetric, Job };
