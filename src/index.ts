@@ -3,14 +3,16 @@ import { Connection } from 'typeorm';
 
 import { server } from './server';
 import getConnection from './db/getConnection';
-import { initSchedule } from './scheduler';
+//import { initSchedule } from './scheduler';
 import { initRepos } from './db';
+import { initRoutes } from './routes';
+import { populateCache } from './services/givingBlockProxy';
 
 let connection: Connection;
 
-server.get('/ping', async (_request, _reply) => {
-  return 'pong\n';
-});
+initRoutes(server);
+
+populateCache();
 
 getConnection().then(async (newConnection) => {
   connection = newConnection;
@@ -29,7 +31,7 @@ getConnection().then(async (newConnection) => {
 
     initRepos();
 
-    initSchedule();
+    //initSchedule();
   });
 });
 
