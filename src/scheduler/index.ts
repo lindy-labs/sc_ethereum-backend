@@ -33,14 +33,16 @@ const schedulerWorker = new Worker(
 
 schedulerQueue.add('updateInvested', null, {
   repeat: {
-    cron: '0 * * * * *',
+    every: 1000 * 60 * 60, // every hour
   },
+  jobId: 'updateInvested',
 });
 
 schedulerQueue.add('vaultPerformance', null, {
   repeat: {
-    cron: '0 * * * * *',
+    every: 1000 * 60 * 60, // every hour
   },
+  jobId: 'vaultPerformance',
 });
 
 schedulerWorker.on('completed', (job: Job, err: Error) => {
