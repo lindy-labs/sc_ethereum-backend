@@ -1,46 +1,37 @@
 import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
-import { server } from './server';
-import getConnection from './db/getConnection';
-//import { initSchedule } from './scheduler';
-import { initRepos } from './db';
-import { initRoutes } from './routes';
-import { refreshOrganizationsList } from './services/givingBlockProxy';
+import * as API from './api';
+import getDBConnection from './db/getConnection';
+import * as Scheduler from './scheduler';
 
 let connection: Connection;
 
-initRoutes(server);
-
-refreshOrganizationsList();
-
-getConnection().then(async (newConnection) => {
+getDBConnection().then(async (newConnection) => {
   connection = newConnection;
 
-  server.register(typeorm, {
-    connection: newConnection,
-  });
+  API.server.register(typeorm, { connection: newConnection! });
 
-  server.listen(process.env.PORT || 8080, (err, address) => {
-    if (err) {
-      server.log.error(err);
-      process.exit(1);
-    }
-
-    server.log.debug(`Server listening at ${address}`);
-
-    initRepos();
-
-    //initSchedule();
-  });
+  await Scheduler.start();
+  await API.start();
 });
 
-process.on('uncaughtException', (err) => {
-  console.error('uncaught error', err);
+function handleExit(code?: number) {
+  console.log('closing');
 
-  Promise.all([connection.close(), server.close()]).finally(() =>
-    process.exit(1),
-  );
+  Promise.all([
+    connection?.close(),
+    API.server.close(),
+    Scheduler.stop(),
+  ]).finally(() => process.exit(code || 0));
 
   setTimeout(() => process.abort(), 1000).unref();
+}
+
+process.on('SIGINT', handleExit);
+process.on('SIGQUIT', handleExit);
+process.on('SIGTERM', handleExit);
+process.on('uncaughtException', (err) => {
+  console.error('uncaught error', err);
+  handleExit(1);
 });
