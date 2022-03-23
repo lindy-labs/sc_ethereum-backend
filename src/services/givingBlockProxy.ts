@@ -1,6 +1,5 @@
-import NodeCache from 'node-cache';
+import async from 'async';
 import axios from 'axios';
-import { mapLimit } from 'async';
 import _ from 'lodash';
 
 //
@@ -21,7 +20,9 @@ type Organization = {
   websiteBlocks?: WebsiteBlocks
 }
 
-type WebsiteBlocks = Map<string, {settings: string | null, value: string | null}>
+type WebsiteBlocks = {
+  [key: string]: {settings: string | null, value: string | null}
+}
 
 //
 // TheGivingBlock API access info
@@ -30,47 +31,24 @@ type WebsiteBlocks = Map<string, {settings: string | null, value: string | null}
 const BASE_URL = 'https://public-api.tgbwidget.com';
 const username = process.env.GIVING_BLOCK_USERNAME;
 const password = process.env.GIVING_BLOCK_PASSWORD;
+const RATE_LIMIT = 5;
+const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) plus +/- 200 millis (latency of each request)
 
-//
-// Cache TTL
-//
+export let organizations: Organization[] = [];
+export let ttl: number = 0;
 
-const TWO_HOURS = 60 * 60 * 2;
-const ONE_DAY = 60 * 60 * 24;
-const UNLIMITED = 0;
+export async function refreshOrganizationsList() {
+  const accessToken = await login();
 
-//
-// Cache
-//
+  const newOrganizations = await getOrganizationsList(accessToken);
 
-const cache = new NodeCache({ 
-  deleteOnExpire: false, 
-  useClones: false
-});
+  await getOrganizationsRegardingRateLimit(newOrganizations, accessToken);
 
-cache.on("expired", async (key, _value) => {
-  switch (key) {
-    case 'GivingBlockAccessToken':
-      await refreshAccessToken();
-      break;
+  organizations = newOrganizations;
+  ttl = Date.now() + 86400;
+}
 
-    case 'GivingBlockCachedOrganizations':
-      await refreshOrganizationsList();
-      break;
-
-    default:
-      break;
-  }
-});
-
-//
-// Private Functions
-//
-
-async function login() {
-  const accessToken = cache.get<string>('GivingBlockAccessToken');
-  if (accessToken) return accessToken;
-
+async function login(): Promise<string> {
   const response = await axios({
     method: "post",
     url: `${BASE_URL}/v1/login`,
@@ -83,73 +61,46 @@ async function login() {
 
   const { data } = response.data;
 
-  if (!data.accessToken || !data.refreshToken) {
+  if (!data.accessToken) {
     console.error(data);
     throw "Failed to login";
   }
 
-  cacheAccessTokens(data.accessToken, data.refreshToken);
-
-  return <string> data.accessToken;
+  return data.accessToken;
 }
 
-async function refreshAccessToken() {
-  console.log("refreshing")
-  const refreshToken = cache.get<string>('GivingBlockRefreshToken');
+async function getOrganizationsList(accessToken: string) {
 
-  const response = await axios({
-    method: "post",
-    url: `${BASE_URL}/v1/refresh-tokens`,
-    data: JSON.stringify({refreshToken}),
-    headers: { "Content-Type": "application/json" },
-  });
-
-  const { data } = response.data;
-
-  if (!data.accessToken || !data.refreshToken) {
-    console.error(data);
-    throw "Failed to refresh token";
-  }
-
-  cacheAccessTokens(data.accessToken, data.refreshToken);
-}
-
-function cacheAccessTokens(accessToken: string, refreshToken: string) {
-  cache.set<string>('GivingBlockAccessToken', accessToken, TWO_HOURS);
-  cache.set<string>('GivingBlockRefreshToken', refreshToken, UNLIMITED);
-}
-
-async function refreshOrganizationsList() {
-  const accessToken = await login();
-
-  const response = await axios({
-    method: "get",
-    url: `${BASE_URL}/v1/organizations/list`,
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  });
-
-  const { data } = response.data;
+  const data = await get('/v1/organizations/list', accessToken);
 
   if (!data.organizations) {
     console.error(data);
     throw "Failed to fetch organizations";
   }
 
-  cache.set<Organization[]>('GivingBlockCachedOrganizations', data.organizations, ONE_DAY);
+  return data.organizations;
 }
 
-async function getOrganizationById(id: number, accessToken: string) {
-  const response = await axios({
-    method: "get",
-    url: `${BASE_URL}/v1/organization/${id}`,
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    },
-  });
+async function getOrganizationsRegardingRateLimit(newOrganizations: Organization[], accessToken: string) {
+  await async.eachOf(newOrganizations, async (organization: Organization, index) => {
+    const round = Math.floor((<number> index) / RATE_LIMIT);
 
-  const { data } = response.data;
+    await new Promise((resolve, _reject) => {
+      setTimeout(
+        async () => {
+          const extendedOrg = await getOrganizationById(organization.id, accessToken);
+          newOrganizations[<number> index] = _.merge(organization, extendedOrg || {})
+          console.log("finished -- round " + round)
+          resolve(true);
+        }, 
+        round * REFRESH_RATE_IN_MILLIS
+      );
+    })
+  });
+}
+
+async function getOrganizationById(id: number, accessToken: string): Promise<Organization> {
+  const data = await get(`/v1/organization/${id}`, accessToken);
 
   if (!data.organization) {
     console.error(data);
@@ -159,19 +110,19 @@ async function getOrganizationById(id: number, accessToken: string) {
   return <Organization> data.organization;
 }
 
-//
-// Public Functions
-//
+async function get(path: string, accessToken: string): Promise<any> {
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${BASE_URL}${path}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      },
+    });
+  
+    return response.data.data;
 
-export function getOrganizationsList() {
-  return cache.get<Organization[]>('GivingBlockCachedOrganizations') || [];
-}
-
-export function getOrganizationsListTTL() {
-  const ttl = cache.getTtl('GivingBlockCachedOrganizations') || 0;
-  return ttl > 0 ? ttl - Date.now() : 0;
-}
-
-export async function populateCache() {
-  await refreshOrganizationsList();
+  } catch (_error) {
+    return get(path, accessToken);
+  }
 }

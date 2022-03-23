@@ -6,13 +6,13 @@ import getConnection from './db/getConnection';
 //import { initSchedule } from './scheduler';
 import { initRepos } from './db';
 import { initRoutes } from './routes';
-import { populateCache } from './services/givingBlockProxy';
+import { refreshOrganizationsList } from './services/givingBlockProxy';
 
 let connection: Connection;
 
 initRoutes(server);
 
-populateCache();
+refreshOrganizationsList();
 
 getConnection().then(async (newConnection) => {
   connection = newConnection;
