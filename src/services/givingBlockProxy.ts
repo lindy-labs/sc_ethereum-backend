@@ -4,6 +4,26 @@ import { mapLimit } from 'async';
 import _ from 'lodash';
 
 //
+// Type Definitions
+//
+
+type Organization = {
+  id: number,
+  name: string,
+  logo: string,
+  country: string,
+  allowsAnon: boolean,
+  nonprofitTaxID: string,
+  areNotesEnabled: boolean,
+  isReceiptEnabled: boolean,
+  categories?: {id: number, name: string}[],
+  widgetCode?: {iframe: string, script: string},
+  websiteBlocks?: WebsiteBlocks
+}
+
+type WebsiteBlocks = Map<string, {settings: string | null, value: string | null}>
+
+//
 // TheGivingBlock API access info
 //
 
@@ -19,7 +39,14 @@ const TWO_HOURS = 60 * 60 * 2;
 const ONE_DAY = 60 * 60 * 24;
 const UNLIMITED = 0;
 
-const cache = new NodeCache({ deleteOnExpire: false });
+//
+// Cache
+//
+
+const cache = new NodeCache({ 
+  deleteOnExpire: false, 
+  useClones: false
+});
 
 cache.on("expired", async (key, _value) => {
   switch (key) {
@@ -27,12 +54,20 @@ cache.on("expired", async (key, _value) => {
       await refreshAccessToken();
       break;
 
+    case 'GivingBlockCachedOrganizations':
+      await refreshOrganizationsList();
+      break;
+
     default:
       break;
   }
 });
 
-async function login(): Promise<string> {
+//
+// Private Functions
+//
+
+async function login() {
   const accessToken = cache.get<string>('GivingBlockAccessToken');
   if (accessToken) return accessToken;
 
@@ -53,15 +88,13 @@ async function login(): Promise<string> {
     throw "Failed to login";
   }
 
-  cache.set<string>('GivingBlockAccessToken', data.accessToken, TWO_HOURS);
-  cache.set<string>('GivingBlockRefreshToken', data.refreshToken, UNLIMITED);
+  cacheAccessTokens(data.accessToken, data.refreshToken);
 
-  return data.accessToken;
+  return <string> data.accessToken;
 }
 
 async function refreshAccessToken() {
-  console.log("refreshing");
-
+  console.log("refreshing")
   const refreshToken = cache.get<string>('GivingBlockRefreshToken');
 
   const response = await axios({
@@ -78,14 +111,15 @@ async function refreshAccessToken() {
     throw "Failed to refresh token";
   }
 
-  cache.set<string>('GivingBlockAccessToken', data.accessToken, TWO_HOURS);
-  cache.set<string>('GivingBlockRefreshToken', data.refreshToken, UNLIMITED);
+  cacheAccessTokens(data.accessToken, data.refreshToken);
 }
 
-export async function getOrganizationsList() {
-  const organizations = cache.get('GivingBlockCachedOrganizations');
-  if (organizations) return organizations;
+function cacheAccessTokens(accessToken: string, refreshToken: string) {
+  cache.set<string>('GivingBlockAccessToken', accessToken, TWO_HOURS);
+  cache.set<string>('GivingBlockRefreshToken', refreshToken, UNLIMITED);
+}
 
+async function refreshOrganizationsList() {
   const accessToken = await login();
 
   const response = await axios({
@@ -103,14 +137,10 @@ export async function getOrganizationsList() {
     throw "Failed to fetch organizations";
   }
 
-  console.log(`Found ${data.organizations.length} organizations`);
-
-  cache.set('GivingBlockCachedOrganizations', data.organizations, ONE_DAY);
-
-  return data.organizations;
+  cache.set<Organization[]>('GivingBlockCachedOrganizations', data.organizations, ONE_DAY);
 }
 
-async function getOrganizationById(id: number, accessToken: string): Promise<any> {
+async function getOrganizationById(id: number, accessToken: string) {
   const response = await axios({
     method: "get",
     url: `${BASE_URL}/v1/organization/${id}`,
@@ -126,9 +156,22 @@ async function getOrganizationById(id: number, accessToken: string): Promise<any
     throw "Failed to fetch organization";
   }
 
-  return data.organization;
+  return <Organization> data.organization;
+}
+
+//
+// Public Functions
+//
+
+export function getOrganizationsList() {
+  return cache.get<Organization[]>('GivingBlockCachedOrganizations') || [];
+}
+
+export function getOrganizationsListTTL() {
+  const ttl = cache.getTtl('GivingBlockCachedOrganizations') || 0;
+  return ttl > 0 ? ttl - Date.now() : 0;
 }
 
 export async function populateCache() {
-  await getOrganizationsList();
+  await refreshOrganizationsList();
 }
