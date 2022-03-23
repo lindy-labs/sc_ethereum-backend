@@ -7,22 +7,22 @@ import _ from 'lodash';
 //
 
 type Organization = {
-  id: number,
-  name: string,
-  logo: string,
-  country: string,
-  allowsAnon: boolean,
-  nonprofitTaxID: string,
-  areNotesEnabled: boolean,
-  isReceiptEnabled: boolean,
-  categories?: {id: number, name: string}[],
-  widgetCode?: {iframe: string, script: string},
-  websiteBlocks?: WebsiteBlocks
-}
+  id: number;
+  name: string;
+  logo: string;
+  country: string;
+  allowsAnon: boolean;
+  nonprofitTaxID: string;
+  areNotesEnabled: boolean;
+  isReceiptEnabled: boolean;
+  categories?: { id: number; name: string }[];
+  widgetCode?: { iframe: string; script: string };
+  websiteBlocks?: WebsiteBlocks;
+};
 
 type WebsiteBlocks = {
-  [key: string]: {settings: string | null, value: string | null}
-}
+  [key: string]: { settings: string | null; value: string | null };
+};
 
 //
 // TheGivingBlock API access info
@@ -50,78 +50,88 @@ export async function refreshOrganizationsList() {
 
 async function login(): Promise<string> {
   const response = await axios({
-    method: "post",
+    method: 'post',
     url: `${BASE_URL}/v1/login`,
     data: JSON.stringify({
       login: username,
       password,
     }),
-    headers: { "Content-Type": "application/json" },
+    headers: { 'Content-Type': 'application/json' },
   });
 
   const { data } = response.data;
 
   if (!data.accessToken) {
     console.error(data);
-    throw "Failed to login";
+    throw 'Failed to login';
   }
 
   return data.accessToken;
 }
 
 async function getOrganizationsList(accessToken: string) {
-
   const data = await get('/v1/organizations/list', accessToken);
 
   if (!data.organizations) {
     console.error(data);
-    throw "Failed to fetch organizations";
+    throw 'Failed to fetch organizations';
   }
 
   return data.organizations;
 }
 
-async function getOrganizationsRegardingRateLimit(newOrganizations: Organization[], accessToken: string) {
-  await async.eachOf(newOrganizations, async (organization: Organization, index) => {
-    const round = Math.floor((<number> index) / RATE_LIMIT);
+async function getOrganizationsRegardingRateLimit(
+  newOrganizations: Organization[],
+  accessToken: string,
+) {
+  await async.eachOf(
+    newOrganizations,
+    async (organization: Organization, index) => {
+      const round = Math.floor(<number>index / RATE_LIMIT);
 
-    await new Promise((resolve, _reject) => {
-      setTimeout(
-        async () => {
-          const extendedOrg = await getOrganizationById(organization.id, accessToken);
-          newOrganizations[<number> index] = _.merge(organization, extendedOrg || {})
-          console.log("finished -- round " + round)
+      await new Promise((resolve, _reject) => {
+        setTimeout(async () => {
+          const extendedOrg = await getOrganizationById(
+            organization.id,
+            accessToken,
+          );
+          newOrganizations[<number>index] = _.merge(
+            organization,
+            extendedOrg || {},
+          );
+          console.log('finished -- round ' + round);
           resolve(true);
-        }, 
-        round * REFRESH_RATE_IN_MILLIS
-      );
-    })
-  });
+        }, round * REFRESH_RATE_IN_MILLIS);
+      });
+    },
+  );
 }
 
-async function getOrganizationById(id: number, accessToken: string): Promise<Organization> {
+async function getOrganizationById(
+  id: number,
+  accessToken: string,
+): Promise<Organization> {
   const data = await get(`/v1/organization/${id}`, accessToken);
 
   if (!data.organization) {
     console.error(data);
-    throw "Failed to fetch organization";
+    throw 'Failed to fetch organization';
   }
 
-  return <Organization> data.organization;
+  return <Organization>data.organization;
 }
 
 async function get(path: string, accessToken: string): Promise<any> {
   try {
     const response = await axios({
-      method: "get",
+      method: 'get',
       url: `${BASE_URL}${path}`,
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`,
       },
     });
-  
-    return response.data.data;
 
+    return response.data.data;
   } catch (_error) {
     return get(path, accessToken);
   }
