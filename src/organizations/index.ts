@@ -41,9 +41,10 @@ export async function refreshOrganizations() {
 
   const organizations = await getOrganizationsList(accessToken);
 
-  await getDetailedOrganizations(organizations, accessToken);
-
-  cachedOrganizations = organizations;
+  cachedOrganizations = await getDetailedOrganizations(
+    organizations,
+    accessToken,
+  );
 }
 
 async function login() {
