@@ -35,7 +35,6 @@ const RATE_LIMIT = 5;
 const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) plus +/- 200 millis (latency of each request)
 
 export let organizations: Organization[] = [];
-export let ttl: number = 0;
 
 export async function refreshOrganizations() {
   const accessToken = await login();
@@ -45,7 +44,6 @@ export async function refreshOrganizations() {
   await getOrganizationsRegardingRateLimit(newOrganizations, accessToken);
 
   organizations = newOrganizations;
-  ttl = Date.now() + 86400;
 }
 
 async function login(): Promise<string> {
@@ -109,15 +107,15 @@ async function getOrganizationsRegardingRateLimit(
 async function getOrganizationById(
   id: number,
   accessToken: string,
-): Promise<Organization> {
-  const data = await get(`/v1/organization/${id}`, accessToken);
+) {
+  const data: {organization?: Organization} = await get(`/v1/organization/${id}`, accessToken);
 
   if (!data.organization) {
     console.error(data);
     throw 'Failed to fetch organization';
   }
 
-  return <Organization>data.organization;
+  return data.organization;
 }
 
 async function get(path: string, accessToken: string): Promise<any> {

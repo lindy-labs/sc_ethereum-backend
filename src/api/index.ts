@@ -1,7 +1,7 @@
 import fastify from 'fastify';
 
 import logger from '../logger';
-import { organizations, ttl } from '../organizations';
+import { organizations } from '../organizations';
 
 export const server = fastify({
   logger,
@@ -14,8 +14,7 @@ server.get('/ping', async (_request, _reply) => {
 server.get('/api/organizations', async (_request, reply) => {
   reply.status(200);
   reply.header('Content-Type', 'application/json');
-  reply.header('Cache-Control', `max-age:${ttl - Date.now()}`);
-  reply.send({ organizations: organizations });
+  reply.send({ organizations });
 });
 
 export function start() {
