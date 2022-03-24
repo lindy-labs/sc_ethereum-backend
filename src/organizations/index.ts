@@ -37,7 +37,7 @@ const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) p
 export let organizations: Organization[] = [];
 export let ttl: number = 0;
 
-export async function refreshOrganizationsList() {
+export async function refreshOrganizations() {
   const accessToken = await login();
 
   const newOrganizations = await getOrganizationsList(accessToken);
@@ -99,7 +99,6 @@ async function getOrganizationsRegardingRateLimit(
             organization,
             extendedOrg || {},
           );
-          console.log('finished -- round ' + round);
           resolve(true);
         }, round * REFRESH_RATE_IN_MILLIS);
       });

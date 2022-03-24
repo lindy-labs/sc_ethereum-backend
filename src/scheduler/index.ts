@@ -22,10 +22,10 @@ const schedulerWorker = new Worker(
   async (job: Job) => {
     switch (job.name) {
       case 'updateInvested':
-        //await updateInvested();
+        await updateInvested();
         break;
       case 'vaultPerformance':
-        //await collectPerformance();
+        await collectPerformance();
         break;
       case 'refreshOrganizations':
         await refreshOrganizations();
