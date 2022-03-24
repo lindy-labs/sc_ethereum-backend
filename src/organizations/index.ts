@@ -1,6 +1,6 @@
 import async from 'async';
 import axios from 'axios';
-import _ from 'lodash';
+import { merge } from 'lodash';
 
 //
 // Type Definitions
@@ -95,7 +95,7 @@ async function getOrganizationsRegardingRateLimit(
             organization.id,
             accessToken,
           );
-          newOrganizations[<number>index] = _.merge(
+          newOrganizations[<number>index] = merge(
             organization,
             extendedOrg || {},
           );
