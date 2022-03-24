@@ -17,7 +17,6 @@
     "fastify": "^3.27.2",
     "fastify-typeorm-plugin": "^2.2.0",
     "lodash": "^4.17.21",
-    "node-cache": "^5.1.2",
     "pg": "^8.7.3",
     "pino": "^7.9.1",
     "pino-pretty": "^7.5.1",
