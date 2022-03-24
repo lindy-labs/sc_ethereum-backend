@@ -1,6 +1,6 @@
 import async from 'async';
 import axios from 'axios';
-import { merge } from 'lodash';
+import { chunk, flatten, merge } from 'lodash';
 
 //
 // Type Definitions
@@ -34,30 +34,29 @@ const password = process.env.GIVING_BLOCK_PASSWORD;
 const RATE_LIMIT = 5;
 const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) plus +/- 200 millis (latency of each request)
 
-export let organizations: Organization[] = [];
+export let cachedOrganizations: Organization[] = [];
 
 export async function refreshOrganizations() {
   const accessToken = await login();
 
-  const newOrganizations = await getOrganizationsList(accessToken);
+  const organizations = await getOrganizationsList(accessToken);
 
-  await getOrganizationsRegardingRateLimit(newOrganizations, accessToken);
+  await getDetailedOrganizations(organizations, accessToken);
 
-  organizations = newOrganizations;
+  cachedOrganizations = organizations;
 }
 
-async function login(): Promise<string> {
-  const response = await axios({
-    method: 'post',
-    url: `${BASE_URL}/v1/login`,
-    data: JSON.stringify({
+async function login() {
+  const response = await axios.post(
+    `${BASE_URL}/v1/login`,
+    {
       login: username,
       password,
-    }),
-    headers: { 'Content-Type': 'application/json' },
-  });
+    },
+    { headers: { 'Content-Type': 'application/json' } },
+  );
 
-  const { data } = response.data;
+  const data: { accessToken?: string } = response.data.data;
 
   if (!data.accessToken) {
     console.error(data);
@@ -68,7 +67,11 @@ async function login(): Promise<string> {
 }
 
 async function getOrganizationsList(accessToken: string) {
-  const data = await get('/v1/organizations/list', accessToken);
+  const response = await axios.get(`${BASE_URL}/v1/organizations/list`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  const data: { organizations?: Organization[] } = response.data.data;
 
   if (!data.organizations) {
     console.error(data);
@@ -78,37 +81,48 @@ async function getOrganizationsList(accessToken: string) {
   return data.organizations;
 }
 
-async function getOrganizationsRegardingRateLimit(
-  newOrganizations: Organization[],
+async function getDetailedOrganizations(
+  organizations: Organization[],
   accessToken: string,
 ) {
-  await async.eachOf(
-    newOrganizations,
-    async (organization: Organization, index) => {
-      const round = Math.floor(<number>index / RATE_LIMIT);
+  const groupedOrganizations = chunk(organizations, RATE_LIMIT);
 
-      await new Promise((resolve, _reject) => {
-        setTimeout(async () => {
-          const extendedOrg = await getOrganizationById(
-            organization.id,
-            accessToken,
-          );
-          newOrganizations[<number>index] = merge(
-            organization,
-            extendedOrg || {},
-          );
-          resolve(true);
-        }, round * REFRESH_RATE_IN_MILLIS);
-      });
+  const newOrganizations: Organization[][] = [];
+
+  await async.eachOf(
+    groupedOrganizations,
+    async (group: Organization[], index) => {
+      await delay(<number>index * REFRESH_RATE_IN_MILLIS);
+      newOrganizations[<number>index] = await parallelRequests(
+        group,
+        accessToken,
+      );
     },
   );
+
+  return flatten(newOrganizations);
 }
 
-async function getOrganizationById(
-  id: number,
-  accessToken: string,
-) {
-  const data: {organization?: Organization} = await get(`/v1/organization/${id}`, accessToken);
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function parallelRequests(organizations: Organization[], accessToken: string) {
+  return async.map(organizations, async (organization: Organization) => {
+    const detailedOrganization = await getOrganizationById(
+      organization.id,
+      accessToken,
+    );
+    return merge(organization, detailedOrganization || {});
+  });
+}
+
+async function getOrganizationById(id: number, accessToken: string) {
+  const response = await axios.get(`${BASE_URL}/v1/organization/${id}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  const data: { organization?: Organization } = response.data.data;
 
   if (!data.organization) {
     console.error(data);
@@ -116,20 +130,4 @@ async function getOrganizationById(
   }
 
   return data.organization;
-}
-
-async function get(path: string, accessToken: string): Promise<any> {
-  try {
-    const response = await axios({
-      method: 'get',
-      url: `${BASE_URL}${path}`,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data.data;
-  } catch (_error) {
-    return get(path, accessToken);
-  }
 }
