@@ -95,7 +95,7 @@ async function getDetailedOrganizations(
     groupedOrganizations,
     async (group: Organization[], index) => {
       await delay(<number>index * REFRESH_RATE_IN_MILLIS);
-      newOrganizations[<number>index] = await parallelRequests(
+      newOrganizations[<number>index] = await fetchOrganizationsDetails(
         group,
         accessToken,
       );
@@ -109,7 +109,7 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function parallelRequests(organizations: Organization[], accessToken: string) {
+function fetchOrganizationsDetails(organizations: Organization[], accessToken: string) {
   return async.map(organizations, async (organization: Organization) => {
     const detailedOrganization = await getOrganizationById(
       organization.id,
