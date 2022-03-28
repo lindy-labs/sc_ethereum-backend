@@ -7,10 +7,7 @@ import updateInvested from '../jobs/updateInvested';
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
 const options = {
-  connection: {
-    host: process.env.REDIS_HOST || '127.0.0.1',
-    port: process.env.REDIS_PORT || 6379,
-  },
+  connection: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
 };
 
 const scheduler = new QueueScheduler(SCHEDULER_QUEUE, options);
@@ -28,6 +25,7 @@ const schedulerWorker = new Worker(
         break;
     }
   },
+
   options,
 );
 

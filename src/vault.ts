@@ -1,10 +1,13 @@
 import { reduce, drop, dropRight, mapValues } from 'lodash';
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
+import assert from 'assert/strict';
 
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
 
 export type Contracts = { [key: string]: Contract };
+
+assert(process.env.WALLET_MNEMONIC);
 
 function contractCalls(contracts: Contracts, call: string): Promise<any>[] {
   return reduce(
