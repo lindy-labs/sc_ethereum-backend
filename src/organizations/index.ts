@@ -35,15 +35,18 @@ const password = process.env.GIVING_BLOCK_PASSWORD;
 const RATE_LIMIT = 5;
 const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) plus +/- 200 millis (latency of each request)
 
-export let organizations: Organization[] = [];
+const REQUEST_RETRIES = 5;
+const RETRY_INTERVAL = 100;
+
+let cachedOrganizations: Organization[] = [];
 
 export async function refreshOrganizations() {
   const accessToken = await login();
 
-  const orgs = await getOrganizationsList(accessToken);
+  const organizations = await getOrganizations(accessToken);
 
-  organizations = await getDetailedOrganizations(
-    orgs,
+  cachedOrganizations = await getDetailedOrganizations(
+    organizations,
     accessToken,
   );
 }
@@ -68,7 +71,7 @@ async function login() {
   return data.accessToken;
 }
 
-async function getOrganizationsList(accessToken: string) {
+async function getOrganizations(accessToken: string) {
   const response = await axios.get(`${BASE_URL}/v1/organizations/list`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -84,22 +87,16 @@ async function getOrganizationsList(accessToken: string) {
 }
 
 async function getDetailedOrganizations(
-  orgs: Organization[],
+  organizations: Organization[],
   accessToken: string,
 ) {
-  const groupedOrganizations = chunk(orgs, RATE_LIMIT);
+  const groupedOrganizations = chunk(organizations, RATE_LIMIT);
 
-  const newOrganizations: Organization[][] = [];
-
-  await async.eachOf(
-    groupedOrganizations,
-    async (group: Organization[], index) => {
-      await delay(<number>index * REFRESH_RATE_IN_MILLIS);
-      newOrganizations[<number>index] = await fetchOrganizationsDetails(
-        group,
-        accessToken,
-      );
-    },
+  const newOrganizations = await Promise.all(
+    groupedOrganizations.map(async (group, index) => {
+      await delay(index * REFRESH_RATE_IN_MILLIS);
+      return await fetchOrganizationsDetails(group, accessToken);
+    }),
   );
 
   return flatten(newOrganizations);
@@ -109,14 +106,19 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function fetchOrganizationsDetails(orgs: Organization[], accessToken: string) {
-  return async.map(orgs, async (organization: Organization) => {
-    const detailedOrganization = await getOrganizationById(
-      organization.id,
-      accessToken,
-    );
-    return merge(organization, detailedOrganization || {});
-  });
+function fetchOrganizationsDetails(
+  organizations: Organization[],
+  accessToken: string,
+) {
+  return Promise.all(
+    organizations.map(async (organization) => {
+      const detailedOrganization = await async.retry(
+        { times: REQUEST_RETRIES, interval: RETRY_INTERVAL },
+        async () => getOrganizationById(organization.id, accessToken),
+      );
+      return merge(organization, detailedOrganization || {});
+    }),
+  );
 }
 
 async function getOrganizationById(id: number, accessToken: string) {
@@ -133,3 +135,5 @@ async function getOrganizationById(id: number, accessToken: string) {
 
   return data.organization;
 }
+
+export { cachedOrganizations as organizations };
