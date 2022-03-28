@@ -35,15 +35,15 @@ const password = process.env.GIVING_BLOCK_PASSWORD;
 const RATE_LIMIT = 5;
 const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) plus +/- 200 millis (latency of each request)
 
-export let cachedOrganizations: Organization[] = [];
+export let organizations: Organization[] = [];
 
 export async function refreshOrganizations() {
   const accessToken = await login();
 
-  const organizations = await getOrganizationsList(accessToken);
+  const orgs = await getOrganizationsList(accessToken);
 
-  cachedOrganizations = await getDetailedOrganizations(
-    organizations,
+  organizations = await getDetailedOrganizations(
+    orgs,
     accessToken,
   );
 }
@@ -84,10 +84,10 @@ async function getOrganizationsList(accessToken: string) {
 }
 
 async function getDetailedOrganizations(
-  organizations: Organization[],
+  orgs: Organization[],
   accessToken: string,
 ) {
-  const groupedOrganizations = chunk(organizations, RATE_LIMIT);
+  const groupedOrganizations = chunk(orgs, RATE_LIMIT);
 
   const newOrganizations: Organization[][] = [];
 
@@ -109,8 +109,8 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function fetchOrganizationsDetails(organizations: Organization[], accessToken: string) {
-  return async.map(organizations, async (organization: Organization) => {
+function fetchOrganizationsDetails(orgs: Organization[], accessToken: string) {
+  return async.map(orgs, async (organization: Organization) => {
     const detailedOrganization = await getOrganizationById(
       organization.id,
       accessToken,

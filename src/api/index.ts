@@ -1,7 +1,7 @@
 import fastify from 'fastify';
 
 import logger from '../logger';
-import { cachedOrganizations as organizations } from '../organizations';
+import { organizations } from '../organizations';
 
 export const server = fastify({
   logger,
