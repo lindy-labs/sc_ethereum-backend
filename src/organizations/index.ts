@@ -1,6 +1,7 @@
 import async from 'async';
 import axios from 'axios';
 import { chunk, flatten, merge } from 'lodash';
+import logger from '../logger';
 
 //
 // Type Definitions
@@ -60,7 +61,7 @@ async function login() {
   const data: { accessToken?: string } = response.data.data;
 
   if (!data.accessToken) {
-    console.error(data);
+    logger.error(data);
     throw 'Failed to login';
   }
 
@@ -75,7 +76,7 @@ async function getOrganizationsList(accessToken: string) {
   const data: { organizations?: Organization[] } = response.data.data;
 
   if (!data.organizations) {
-    console.error(data);
+    logger.error(data);
     throw 'Failed to fetch organizations';
   }
 
@@ -126,7 +127,7 @@ async function getOrganizationById(id: number, accessToken: string) {
   const data: { organization?: Organization } = response.data.data;
 
   if (!data.organization) {
-    console.error(data);
+    logger.error(data);
     throw 'Failed to fetch organization';
   }
 
