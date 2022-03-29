@@ -3,10 +3,6 @@ import axios from 'axios';
 import { chunk, flatten, merge } from 'lodash';
 import logger from '../logger';
 
-//
-// Type Definitions
-//
-
 type Organization = {
   id: number;
   name: string;
@@ -24,10 +20,6 @@ type Organization = {
 type WebsiteBlocks = {
   [key: string]: { settings: string | null; value: string | null };
 };
-
-//
-// TheGivingBlock API access info
-//
 
 const BASE_URL = 'https://public-api.tgbwidget.com';
 const username = process.env.GIVING_BLOCK_USERNAME;
