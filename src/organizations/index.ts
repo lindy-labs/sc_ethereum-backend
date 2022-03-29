@@ -106,7 +106,7 @@ function fetchOrganizationsDetails(
     organizations.map(async (organization) => {
       const detailedOrganization = await async.retry(
         { times: REQUEST_RETRIES, interval: RETRY_INTERVAL },
-        async () => getOrganizationById(organization.id, accessToken),
+        async () => await getOrganizationById(organization.id, accessToken),
       );
       return merge(organization, detailedOrganization || {});
     }),
