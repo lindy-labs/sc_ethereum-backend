@@ -1,6 +1,6 @@
 import async from 'async';
 import axios from 'axios';
-import { chunk, flatten, merge } from 'lodash';
+import _, { chunk, flatten, merge } from 'lodash';
 import logger from '../logger';
 
 type Organization = {
@@ -37,10 +37,7 @@ export async function refreshOrganizations() {
 
   const organizations = await getOrganizations(accessToken);
 
-  cachedOrganizations = await getDetailedOrganizations(
-    organizations,
-    accessToken,
-  );
+  await getDetailedOrganizations(organizations, accessToken);
 }
 
 async function login() {
@@ -82,16 +79,21 @@ async function getDetailedOrganizations(
   organizations: Organization[],
   accessToken: string,
 ) {
+  if (cachedOrganizations.length === 0) cachedOrganizations = organizations;
+
   const groupedOrganizations = chunk(organizations, RATE_LIMIT);
 
-  const newOrganizations = await Promise.all(
+  await Promise.all(
     groupedOrganizations.map(async (group, index) => {
       await delay(index * REFRESH_RATE_IN_MILLIS);
-      return await fetchOrganizationsDetails(group, accessToken);
+
+      const organizations = await fetchOrganizationsDetails(group, accessToken);
+
+      cachedOrganizations = cachedOrganizations
+        .filter(({ id }) => !_.find(organizations, { id }))
+        .concat(organizations);
     }),
   );
-
-  return flatten(newOrganizations);
 }
 
 function delay(ms: number) {
