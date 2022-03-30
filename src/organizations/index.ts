@@ -22,8 +22,8 @@ type WebsiteBlocks = {
 };
 
 const BASE_URL = 'https://public-api.tgbwidget.com';
-const username = process.env.GIVING_BLOCK_USERNAME;
-const password = process.env.GIVING_BLOCK_PASSWORD;
+const USERNAME = process.env.GIVING_BLOCK_USERNAME;
+const PASSWORD = process.env.GIVING_BLOCK_PASSWORD;
 const RATE_LIMIT = 5;
 const REFRESH_RATE_IN_MILLIS = 1200; // assuming 1 second (refresh rate limit) plus +/- 200 millis (latency of each request)
 
@@ -45,8 +45,8 @@ async function login() {
   const response = await axios.post(
     `${BASE_URL}/v1/login`,
     {
-      login: username,
-      password,
+      login: USERNAME,
+      PASSWORD,
     },
     { headers: { 'Content-Type': 'application/json' } },
   );
@@ -103,7 +103,7 @@ function getDetailedOrganizations(organizations: Organization[]) {
 async function updateOrganizationDetails(organization: Organization) {
   const details = await async.retry(
     { times: REQUEST_RETRIES, interval: RETRY_INTERVAL },
-    async () => await getOrganizationById(organization.id),
+    async () => getOrganizationById(organization.id),
   );
 
   return _.merge(organization, details || {});
