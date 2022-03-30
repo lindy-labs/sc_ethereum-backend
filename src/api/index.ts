@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 
 import logger from '../logger';
+import { organizations } from '../organizations';
 
 export const server = fastify({
   logger,
@@ -8,6 +9,12 @@ export const server = fastify({
 
 server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
+});
+
+server.get('/api/organizations', async (_request, reply) => {
+  reply.status(200);
+  reply.header('Content-Type', 'application/json');
+  reply.send({ organizations });
 });
 
 export function start() {

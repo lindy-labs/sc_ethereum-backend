@@ -1,13 +1,22 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
+import Redis from 'ioredis';
 
 import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
 import updateInvested from '../jobs/updateInvested';
+import refreshOrganizations from '../jobs/refreshOrganizations';
 
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
+const redisOptions: Redis.RedisOptions = {
+  maxRetriesPerRequest: null, 
+  enableReadyCheck: false
+}
+
+const connection = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', redisOptions);
+
 const options = {
-  connection: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
+  connection,
 };
 
 const scheduler = new QueueScheduler(SCHEDULER_QUEUE, options);
@@ -18,10 +27,13 @@ const schedulerWorker = new Worker(
   async (job: Job) => {
     switch (job.name) {
       case 'updateInvested':
-        await updateInvested();
+        // await updateInvested();
         break;
       case 'vaultPerformance':
         await collectPerformance();
+        break;
+      case 'refreshOrganizations':
+        await refreshOrganizations();
         break;
     }
   },
@@ -43,6 +55,13 @@ schedulerQueue.add('vaultPerformance', null, {
   jobId: 'vaultPerformance',
 });
 
+schedulerQueue.add('refreshOrganizations', null, {
+  repeat: {
+    every: 1000 * 60 * 60 * 4, // every 4 hours
+  },
+  jobId: 'refreshOrganizations',
+});
+
 schedulerWorker.on('completed', (job: Job, err: Error) => {
   logger.info(`${job.id} has been completed!`);
 });
@@ -54,6 +73,7 @@ schedulerWorker.on('failed', (job: Job, err: Error) => {
 export async function start() {
   schedulerQueue.add('updateInvested', null, {});
   schedulerQueue.add('vaultPerformance', null, {});
+  schedulerQueue.add('refreshOrganizations', null, {});
 }
 
 export async function stop() {
