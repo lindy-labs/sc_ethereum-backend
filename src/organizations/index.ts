@@ -46,7 +46,7 @@ async function login() {
     `${BASE_URL}/v1/login`,
     {
       login: USERNAME,
-      PASSWORD,
+      password: PASSWORD,
     },
     { headers: { 'Content-Type': 'application/json' } },
   );
