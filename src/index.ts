@@ -3,6 +3,7 @@ import { Connection } from 'typeorm';
 
 import * as API from './api';
 import getDBConnection from './db/getConnection';
+import * as Monitoring from './monitoring';
 import * as Scheduler from './scheduler';
 
 let connection: Connection;
@@ -13,6 +14,7 @@ getDBConnection().then(async (newConnection) => {
   API.server.register(typeorm, { connection: newConnection! });
 
   await Scheduler.start();
+  Monitoring.start();
   await API.start();
 });
 
