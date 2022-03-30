@@ -1,6 +1,6 @@
 import async from 'async';
 import axios from 'axios';
-import _, { chunk, flatten, merge } from 'lodash';
+import _ from 'lodash';
 import logger from '../logger';
 
 type Organization = {
@@ -31,13 +31,14 @@ const REQUEST_RETRIES = 5;
 const RETRY_INTERVAL = 100;
 
 let cachedOrganizations: Organization[] = [];
+let accessToken: string;
 
 export async function refreshOrganizations() {
-  const accessToken = await login();
+  accessToken = await login();
 
-  const organizations = await getOrganizations(accessToken);
+  const organizations = await getOrganizationsList();
 
-  await getDetailedOrganizations(organizations, accessToken);
+  await getAndUpdateOrganizationsDetails(organizations);
 }
 
 async function login() {
@@ -60,7 +61,7 @@ async function login() {
   return data.accessToken;
 }
 
-async function getOrganizations(accessToken: string) {
+async function getOrganizationsList() {
   const response = await axios.get(`${BASE_URL}/v1/organizations/list`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -69,53 +70,46 @@ async function getOrganizations(accessToken: string) {
 
   if (!data.organizations) {
     logger.error(data);
-    throw 'Failed to fetch organizations';
+    throw 'Failed to get organizations';
   }
 
   return data.organizations;
 }
 
-async function getDetailedOrganizations(
-  organizations: Organization[],
-  accessToken: string,
-) {
+function getAndUpdateOrganizationsDetails(organizations: Organization[]) {
   if (cachedOrganizations.length === 0) cachedOrganizations = organizations;
 
-  const groupedOrganizations = chunk(organizations, RATE_LIMIT);
+  const groupedOrganizations = _.chunk(organizations, RATE_LIMIT);
 
-  await Promise.all(
-    groupedOrganizations.map(async (group, index) => {
-      await delay(index * REFRESH_RATE_IN_MILLIS);
+  const promises = groupedOrganizations.map(async (group, index) => {
+    await delay(index * REFRESH_RATE_IN_MILLIS);
 
-      const organizations = await fetchOrganizationsDetails(group, accessToken);
+    const detailedOrganizations = await getDetailedOrganizations(group);
 
-      cachedOrganizations = cachedOrganizations
-        .filter(({ id }) => !_.find(organizations, { id }))
-        .concat(organizations);
-    }),
-  );
+    updateCachedOrganizations(detailedOrganizations);
+  });
+
+  return Promise.all(promises);
 }
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function fetchOrganizationsDetails(
-  organizations: Organization[],
-  accessToken: string,
-) {
-  return Promise.all(
-    organizations.map(async (organization) => {
-      const detailedOrganization = await async.retry(
-        { times: REQUEST_RETRIES, interval: RETRY_INTERVAL },
-        async () => await getOrganizationById(organization.id, accessToken),
-      );
-      return merge(organization, detailedOrganization || {});
-    }),
-  );
+function getDetailedOrganizations(organizations: Organization[]) {
+  return Promise.all(organizations.map(updateOrganizationDetails));
 }
 
-async function getOrganizationById(id: number, accessToken: string) {
+async function updateOrganizationDetails(organization: Organization) {
+  const details = await async.retry(
+    { times: REQUEST_RETRIES, interval: RETRY_INTERVAL },
+    async () => await getOrganizationById(organization.id),
+  );
+
+  return _.merge(organization, details || {});
+}
+
+async function getOrganizationById(id: number) {
   const response = await axios.get(`${BASE_URL}/v1/organization/${id}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -124,10 +118,16 @@ async function getOrganizationById(id: number, accessToken: string) {
 
   if (!data.organization) {
     logger.error(data);
-    throw 'Failed to fetch organization';
+    throw 'Failed to get organization';
   }
 
   return data.organization;
+}
+
+function updateCachedOrganizations(detailedOrganizations: Organization[]) {
+  cachedOrganizations = cachedOrganizations
+    .filter(({ id }) => !_.find(detailedOrganizations, { id }))
+    .concat(detailedOrganizations);
 }
 
 export { cachedOrganizations as organizations };

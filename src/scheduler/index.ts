@@ -1,5 +1,5 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
-import IORedis from 'ioredis';
+import Redis from 'ioredis';
 
 import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
@@ -8,7 +8,12 @@ import refreshOrganizations from '../jobs/refreshOrganizations';
 
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
-const connection = IORedis(process.env.REDIS_URL || 'redis://127.0.0.1:6379');
+const redisOptions: Redis.RedisOptions = {
+  maxRetriesPerRequest: null, 
+  enableReadyCheck: false
+}
+
+const connection = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', redisOptions);
 
 const options = {
   connection,
