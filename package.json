@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.7",
+    "@sentry/cli": "^1.74.3",
     "@types/async": "^3.2.12",
     "@types/ioredis": "^4.28.10",
     "@types/jest": "^27.4.1",
