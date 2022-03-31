@@ -26,6 +26,7 @@ function handleExit(code?: number) {
     connection?.close(),
     API.server.close(),
     Scheduler.stop(),
+    Monitoring.stop(),
   ]).finally(() => process.exit(code || 0));
 
   setTimeout(() => process.abort(), 1000).unref();
