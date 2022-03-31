@@ -951,6 +951,16 @@
     "@sentry/utils" "6.19.3"
     tslib "^1.9.3"
 
+"@sentry/integrations@^6.19.3":
+  version "6.19.3"
+  resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-6.19.3.tgz#b5ac64591a9c7ae60f54c7d5ebd0d9152215c377"
+  integrity sha512-hOyX0UoH1ZyFtOjIazL2M9HfQMIjwukv0AtTX2W7sVfV1qxvISaV5lYZrAw1xB1lRoUwOJr/C0odddHWtBgdsA==
+  dependencies:
+    "@sentry/types" "6.19.3"
+    "@sentry/utils" "6.19.3"
+    localforage "^1.8.1"
+    tslib "^1.9.3"
+
 "@sentry/minimal@6.19.3":
   version "6.19.3"
   resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-6.19.3.tgz#b9b7f0d7f0cd2341b243318668ac01458f9d7889"
@@ -2479,6 +2489,11 @@ ignore-by-default@^1.0.1:
   resolved "https://registry.yarnpkg.com/ignore-by-default/-/ignore-by-default-1.0.1.tgz#48ca6d72f6c6a3af00a9ad4ae6876be3889e2b09"
   integrity sha1-SMptcvbGo68Aqa1K5odr44ieKwk=
 
+immediate@~3.0.5:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
+  integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
+
 import-lazy@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/import-lazy/-/import-lazy-2.1.0.tgz#05698e3d45c88e8d7e9d92cb0584e77f096f3e43"
@@ -3234,6 +3249,13 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+lie@3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/lie/-/lie-3.1.1.tgz#9a436b2cc7746ca59de7a41fa469b3efb76bd87e"
+  integrity sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=
+  dependencies:
+    immediate "~3.0.5"
+
 light-my-request@^4.2.0:
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-4.8.0.tgz#b0bd074902f95814a956819bc2b6c99d8cafcefb"
@@ -3248,6 +3270,13 @@ lines-and-columns@^1.1.6:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
+
+localforage@^1.8.1:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.10.0.tgz#5c465dc5f62b2807c3a84c0c6a1b1b3212781dd4"
+  integrity sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==
+  dependencies:
+    lie "3.1.1"
 
 locate-path@^5.0.0:
   version "5.0.0"

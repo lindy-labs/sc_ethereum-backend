@@ -1,5 +1,6 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import * as Sentry from '@sentry/node';
 
 import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
@@ -68,6 +69,7 @@ schedulerWorker.on('completed', (job: Job, err: Error) => {
 
 schedulerWorker.on('failed', (job: Job, err: Error) => {
   logger.error(`${job.id} has failed with ${err.message}`);
+  Sentry.captureException(err);
 });
 
 export async function start() {

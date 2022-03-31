@@ -13,8 +13,9 @@ getDBConnection().then(async (newConnection) => {
 
   API.server.register(typeorm, { connection: newConnection! });
 
-  await Scheduler.start();
   Monitoring.start();
+
+  await Scheduler.start();
   await API.start();
 });
 
