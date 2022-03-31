@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import Tracing from '@sentry/tracing';
-import { RewriteFrames } from '@sentry/integrations'; 
+import { RewriteFrames } from '@sentry/integrations';
 
 const options = {
   dsn: process.env.SENTRY_DSN,
