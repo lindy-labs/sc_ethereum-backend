@@ -1,4 +1,4 @@
-import { updateInvested } from '../vault';
+import { updateInvested } from '../contracts/vault';
 import { createJob } from './helpers';
 
 const JOB_NAME = 'updateInvested';
