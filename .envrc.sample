@@ -1,6 +1,7 @@
 export POSTGRESQL_USER=postgres
 export POSTGRESQL_PASSWORD=postgres
 export RPC_URL=ws://your-rpc-url
-export REDIS_HOST=127.0.0.1
-export REDIS_PORT=6379
+export REDIS_URL="redis://127.0.0.1:6379"
 export WALLET_MNEMONIC="the mnemonic words and such"
+export GIVING_BLOCK_USERNAME=sandclock
+export GIVING_BLOCK_PASSWORD=somepassword

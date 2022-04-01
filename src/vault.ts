@@ -1,10 +1,14 @@
 import { reduce, drop, dropRight, mapValues } from 'lodash';
+
+import { Contracts, wallet } from './provider';
+import { contractCalls } from './contractHelper';
 import { BigNumber, Contract } from 'ethers';
+import assert from 'assert/strict';
 
 import { addresses } from './config/addresses';
 import { abi as vaultABI } from './abis/Vault';
-import { Contracts, wallet } from './provider';
-import { contractCalls } from './contractHelper';
+
+assert(process.env.WALLET_MNEMONIC);
 
 export const vaults: Contracts = reduce(
   addresses.ropsten.vault,
