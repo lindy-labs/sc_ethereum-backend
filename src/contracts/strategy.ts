@@ -1,5 +1,6 @@
 import { Contract } from 'ethers';
 import { reduce } from 'lodash';
+import { request, gql } from 'graphql-request';
 
 import { Contracts, wallet } from '../helpers/provider';
 // import { server } from '../api';
@@ -22,6 +23,36 @@ export const strategies: Contracts = reduce(
   {},
 );
 
-export async function depositOperations() {}
+export async function depositOperations() {
+  const query = gql`
+    {
+      depositOperations {
+        id
+        idx
+        underlyingAmount
+        ustAmount
+        finished
+      }
+    }
+  `;
 
-export async function redeemOperations() {}
+  const response = await request(process.env.GRAPH_URL!, query);
+
+  console.log('depositOperations query response', response);
+}
+
+export async function redeemOperations() {
+  const query = gql`
+    {
+      redeemOperations {
+        id
+        aUstAmount
+        finished
+      }
+    }
+  `;
+
+  const response = await request(process.env.GRAPH_URL!, query);
+
+  console.log('redeemOperations query response', response);
+}
