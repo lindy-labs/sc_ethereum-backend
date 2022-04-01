@@ -1,13 +1,13 @@
 import { Contract } from 'ethers';
 import { reduce } from 'lodash';
 
-import { Contracts, wallet } from './helpers/provider';
-import { server } from './api';
-import { contractCalls } from './helpers/contracts';
+import { Contracts, wallet } from '../helpers/provider';
+// import { server } from '../api';
+// import { contractCalls } from '../helpers/contracts';
 
-import { addresses } from './config/addresses';
-import { abi as anchorUSTStratABI } from './abis/AnchorUSTStrategy';
-import { abi as anchorNonUSTStratABI } from './abis/AnchorNonUSTStrategy';
+import { addresses } from '../config/addresses';
+import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
+import { abi as anchorNonUSTStratABI } from '../abis/AnchorNonUSTStrategy';
 
 export const strategies: Contracts = reduce(
   addresses.ropsten.strategy,
