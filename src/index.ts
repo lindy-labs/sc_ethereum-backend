@@ -4,6 +4,7 @@ import { Connection } from 'typeorm';
 import * as API from './api';
 import getDBConnection from './db/getConnection';
 import * as Scheduler from './scheduler';
+import { depositOperations } from './contracts/strategy';
 
 let connection: Connection;
 
@@ -11,6 +12,8 @@ getDBConnection().then(async (newConnection) => {
   connection = newConnection;
 
   API.server.register(typeorm, { connection: newConnection! });
+
+  await depositOperations();
 
   await Scheduler.start();
   await API.start();

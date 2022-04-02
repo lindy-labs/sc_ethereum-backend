@@ -10,6 +10,20 @@ import { addresses } from '../config/addresses';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
 import { abi as anchorNonUSTStratABI } from '../abis/AnchorNonUSTStrategy';
 
+type DepositOperation = {
+  finished: boolean;
+  id: string;
+  idx: string;
+  underlyingAmount: string;
+  ustAmount: string;
+};
+
+type RedeemOperation = {
+  finished: boolean;
+  id: string;
+  aUstAmount: string;
+};
+
 export const strategies: Contracts = reduce(
   addresses.ropsten.strategy,
   (memo: Contracts, address: string, strategy: string) => {
@@ -23,7 +37,27 @@ export const strategies: Contracts = reduce(
   {},
 );
 
-export async function depositOperations() {
+export async function checkAndFinalizeDeposits() {
+  const operations = await depositOperations();
+
+  const unfinished = operations.forEach((operation: DepositOperation) => {
+    if (!operation.finished) {
+      // Attempt to finalize deposit
+    }
+  });
+}
+
+export async function checkAndFinalizeRedemptions() {
+  const operations = await redeemOperations();
+
+  const unfinished = operations.forEach((operation: RedeemOperation) => {
+    if (!operation.finished) {
+      // Attempt to finalize redemption
+    }
+  });
+}
+
+export async function depositOperations(): Promise<DepositOperation[]> {
   const query = gql`
     {
       depositOperations {
@@ -36,12 +70,10 @@ export async function depositOperations() {
     }
   `;
 
-  const response = await request(process.env.GRAPH_URL!, query);
-
-  console.log('depositOperations query response', response);
+  return (await request(process.env.GRAPH_URL!, query)).depositOperations;
 }
 
-export async function redeemOperations() {
+export async function redeemOperations(): Promise<RedeemOperation[]> {
   const query = gql`
     {
       redeemOperations {
@@ -52,7 +84,5 @@ export async function redeemOperations() {
     }
   `;
 
-  const response = await request(process.env.GRAPH_URL!, query);
-
-  console.log('redeemOperations query response', response);
+  return (await request(process.env.GRAPH_URL!, query)).redeemOperations;
 }
