@@ -8,12 +8,12 @@ import * as Scheduler from './scheduler';
 
 let connection: Connection;
 
+Monitoring.start();
+
 getDBConnection().then(async (newConnection) => {
   connection = newConnection;
 
   API.server.register(typeorm, { connection: newConnection! });
-
-  Monitoring.start();
 
   await Scheduler.start();
   await API.start();

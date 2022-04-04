@@ -3,6 +3,7 @@ import Tracing from '@sentry/tracing';
 import { RewriteFrames } from '@sentry/integrations';
 
 const options = {
+  attachStacktrace: true,
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
   integrations: [
