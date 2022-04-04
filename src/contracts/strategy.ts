@@ -24,17 +24,10 @@ type RedeemOperation = {
   aUstAmount: string;
 };
 
-export const strategies: Contracts = reduce(
-  addresses.ropsten.strategy,
-  (memo: Contracts, address: string, strategy: string) => {
-    let contract = new Contract(address, anchorNonUSTStratABI, wallet);
-    if (strategy === 'UST') {
-      contract = new Contract(address, anchorUSTStratABI, wallet);
-    }
-    memo[strategy] = contract;
-    return memo;
-  },
-  {},
+export const strategy: Contract = new Contract(
+  addresses.ropsten.strategy.UST,
+  anchorUSTStratABI,
+  wallet,
 );
 
 export async function checkAndFinalizeDeposits() {

@@ -8,9 +8,6 @@ export const addresses = {
     },
     strategy: {
       UST: '0x394480300a35558338d32bBE7263d447BA0d409E',
-      USDT: '0x7cb05951DeeC3056641Aef24B480c09e7F488CAB',
-      USDC: '0x1A2C932AE7f9A7ad0CB3A9896AbF4E59460B0e76',
-      DAI: '0xd953964D803c1a522a819Ac07045EfD9B3fAeb12',
     },
   },
 };
