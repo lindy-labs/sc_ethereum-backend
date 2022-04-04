@@ -22,3 +22,7 @@ export function start() {
 export function stop() {
   return Sentry.close();
 }
+
+export function captureException(error: Error) {
+  return Sentry.captureException(error);
+}
