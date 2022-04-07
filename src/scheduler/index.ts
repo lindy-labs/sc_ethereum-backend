@@ -1,5 +1,6 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import * as Monitoring from '../monitoring';
 
 import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
@@ -9,11 +10,14 @@ import refreshOrganizations from '../jobs/refreshOrganizations';
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
 const redisOptions: Redis.RedisOptions = {
-  maxRetriesPerRequest: null, 
-  enableReadyCheck: false
-}
+  maxRetriesPerRequest: null,
+  enableReadyCheck: false,
+};
 
-const connection = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', redisOptions);
+const connection = new Redis(
+  process.env.REDIS_URL || 'redis://127.0.0.1:6379',
+  redisOptions,
+);
 
 const options = {
   connection,
@@ -68,6 +72,7 @@ schedulerWorker.on('completed', (job: Job, err: Error) => {
 
 schedulerWorker.on('failed', (job: Job, err: Error) => {
   logger.error(`${job.id} has failed with ${err.message}`);
+  Monitoring.captureException(err);
 });
 
 export async function start() {

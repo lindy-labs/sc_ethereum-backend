@@ -55,7 +55,7 @@ async function login() {
 
   if (!data.accessToken) {
     logger.error(data);
-    throw 'Failed to login';
+    throw new Error('Failed to login');
   }
 
   return data.accessToken;
@@ -70,7 +70,7 @@ async function getOrganizationsList() {
 
   if (!data.organizations) {
     logger.error(data);
-    throw 'Failed to get organizations';
+    throw new Error('Failed to get organizations');
   }
 
   return data.organizations;
@@ -118,7 +118,7 @@ async function getOrganizationById(id: number) {
 
   if (!data.organization) {
     logger.error(data);
-    throw 'Failed to get organization';
+    throw new Error('Failed to get organization');
   }
 
   return data.organization;

@@ -10,6 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@sentry/integrations": "^6.19.3",
+    "@sentry/node": "^6.19.3",
+    "@sentry/tracing": "^6.19.3",
     "async": "^3.2.3",
     "axios": "^0.26.1",
     "bullmq": "^1.78.1",
@@ -25,6 +28,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.7",
+    "@sentry/cli": "^1.74.3",
     "@types/async": "^3.2.12",
     "@types/ioredis": "^4.28.10",
     "@types/jest": "^27.4.1",
