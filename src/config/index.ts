@@ -4,9 +4,10 @@ export default {
   ropsten: () => {
     assert(process.env.ROPSTEN_RPC_URL);
     assert(process.env.TESTNET_MNEMONIC);
+    assert(process.env.ROPSTEN_VAULT);
 
     return {
-      vault: '0x6e1d164c682698857EB22fB9a184B245329F7581',
+      vault: process.env.ROPSTEN_VAULT,
       rpcURL: process.env.ROPSTEN_RPC_URL,
       mnemonic: process.env.TESTNET_MNEMONIC,
     };

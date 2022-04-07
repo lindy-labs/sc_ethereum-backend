@@ -7,4 +7,5 @@ export POSTGRESQL_PASSWORD=postgres
 export POSTGRESQL_USER=postgres
 export REDIS_URL="redis://127.0.0.1:6379"
 export ROPSTEN_RPC_URL=ws://your-rpc-url
+export ROPSTEN_VAULT="0x6e1d164c682698857EB22fB9a184B245329F7581"
 export TESTNET_MNEMONIC="the mnemonic words and such"
