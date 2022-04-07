@@ -8,10 +8,8 @@ import { Contracts, wallet } from '../helpers/provider';
 
 import { addresses } from '../config/addresses';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
-import { abi as anchorNonUSTStratABI } from '../abis/AnchorNonUSTStrategy';
 
 type DepositOperation = {
-  finished: boolean;
   id: string;
   idx: string;
   underlyingAmount: string;
@@ -19,8 +17,8 @@ type DepositOperation = {
 };
 
 type RedeemOperation = {
-  finished: boolean;
   id: string;
+  idx: string;
   aUstAmount: string;
 };
 
@@ -33,20 +31,20 @@ export const strategy: Contract = new Contract(
 export async function checkAndFinalizeDeposits() {
   const operations = await depositOperations();
 
-  const unfinished = operations.forEach((operation: DepositOperation) => {
-    if (!operation.finished) {
-      // Attempt to finalize deposit
-    }
+  operations.forEach(async (operation: DepositOperation) => {
+    strategy.finishDepositStable(operation.idx, {
+      gasLimit: await strategy.finishDepositStable(operation.idx),
+    });
   });
 }
 
 export async function checkAndFinalizeRedemptions() {
   const operations = await redeemOperations();
 
-  const unfinished = operations.forEach((operation: RedeemOperation) => {
-    if (!operation.finished) {
-      // Attempt to finalize redemption
-    }
+  operations.forEach(async (operation: RedeemOperation) => {
+    strategy.finishRedeemStable(operation.idx, {
+      gasLimit: await strategy.finishRedeemStable(operation.idx),
+    });
   });
 }
 
@@ -58,7 +56,6 @@ export async function depositOperations(): Promise<DepositOperation[]> {
         idx
         underlyingAmount
         ustAmount
-        finished
       }
     }
   `;
@@ -71,8 +68,8 @@ export async function redeemOperations(): Promise<RedeemOperation[]> {
     {
       redeemOperations {
         id
+        idx
         aUstAmount
-        finished
       }
     }
   `;

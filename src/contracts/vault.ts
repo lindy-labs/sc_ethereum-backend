@@ -47,5 +47,5 @@ export async function vaultPerformances(): Promise<BigNumber[]> {
 }
 
 export async function updateInvested() {
-  mapValues(vaults, (vault) => vault.updateInvested());
+  mapValues(vaults, (vault) => vault.updateInvested('0x'));
 }
