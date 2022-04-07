@@ -31,13 +31,13 @@ const schedulerWorker = new Worker(
   async (job: Job) => {
     switch (job.name) {
       case 'updateInvested':
-        // await updateInvested();
+        await updateInvested(job.data);
         break;
       case 'vaultPerformance':
-        await collectPerformance();
+        await collectPerformance(job.data);
         break;
       case 'refreshOrganizations':
-        await refreshOrganizations();
+        await refreshOrganizations(job.data);
         break;
     }
   },
@@ -76,9 +76,23 @@ schedulerWorker.on('failed', (job: Job, err: Error) => {
 });
 
 export async function start() {
-  schedulerQueue.add('updateInvested', null, {});
-  schedulerQueue.add('vaultPerformance', null, {});
-  schedulerQueue.add('refreshOrganizations', null, {});
+  schedulerQueue.add('updateInvested', null, {
+    jobId: 'updateInvested',
+  });
+  schedulerQueue.add(
+    'vaultPerformance',
+    { force: true },
+    {
+      jobId: 'vaultPerformance',
+    },
+  );
+  schedulerQueue.add(
+    'refreshOrganizations',
+    { force: true },
+    {
+      jobId: 'refreshOrganizations',
+    },
+  );
 }
 
 export async function stop() {
