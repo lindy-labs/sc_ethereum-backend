@@ -3,7 +3,7 @@ import { request, gql } from 'graphql-request';
 
 import { wallet } from '../helpers/provider';
 
-import { addresses } from '../config/addresses';
+import configByNetwork from '../config';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
 import { server } from '../api';
 
@@ -20,8 +20,10 @@ type RedeemOperation = {
   aUstAmount: string;
 };
 
+const config = configByNetwork.env();
+
 export const strategy: Contract = new Contract(
-  addresses.ropsten.strategy.UST,
+  config.strategy,
   anchorUSTStratABI,
   wallet,
 );

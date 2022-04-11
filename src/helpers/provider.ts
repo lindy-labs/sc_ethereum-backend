@@ -1,7 +1,7 @@
 import { Contract, providers, Wallet } from 'ethers';
 import configByNetwork from '../config';
 
-const config = configByNetwork.ropsten();
+const config = configByNetwork.env();
 
 export type Contracts = { [key: string]: Contract };
 

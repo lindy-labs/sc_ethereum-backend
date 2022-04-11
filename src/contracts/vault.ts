@@ -5,7 +5,7 @@ import { Contracts, wallet } from '../helpers/provider';
 
 import { abi as vaultABI } from '../abis/Vault';
 
-const config = configByNetwork.ropsten();
+const config = configByNetwork.env();
 
 const vault = new Contract(config.vault, vaultABI, wallet);
 

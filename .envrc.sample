@@ -1,6 +1,7 @@
+export ENV=local
 export ETH_RPC_URL=ws://your-rpc-url
 export GIVING_BLOCK_PASSWORD=somepassword
-export GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
+export ROPSTEN_GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
 export SENTRY_DSN=https://sentry-dsn-url
 export GIVING_BLOCK_USERNAME=sandclock
 export MAINNET_MNEMONIC="the mnemonic words and such"
@@ -9,4 +10,7 @@ export POSTGRESQL_USER=postgres
 export REDIS_URL="redis://127.0.0.1:6379"
 export ROPSTEN_RPC_URL=ws://your-rpc-url
 export ROPSTEN_VAULT="0x6e1d164c682698857EB22fB9a184B245329F7581"
+export ROPSTEN_STRATEGY="0xdca1cb188f6160f5917a177a5800509f47a25acf"
+export LOCAL_VAULT="0x1c8967Af415b1516c96c08880aA0E87e82161b9a"
+export LOCAL_STRATEGY="0xFa7447c91989141De3Fd4988810e358119EF2e7f"
 export TESTNET_MNEMONIC="the mnemonic words and such"
