@@ -5,7 +5,6 @@ import * as API from './api';
 import getDBConnection from './db/getConnection';
 import * as Monitoring from './monitoring';
 import * as Scheduler from './scheduler';
-import { finalizeDeposits } from './contracts/strategy';
 
 let connection: Connection;
 
