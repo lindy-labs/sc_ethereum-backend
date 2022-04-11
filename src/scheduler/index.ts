@@ -100,6 +100,12 @@ export async function start() {
   schedulerQueue.add('updateInvested', null, {
     jobId: 'updateInvested',
   });
+  schedulerQueue.add('finalizeDeposits', null, {
+    jobId: 'finalizeDeposits',
+  });
+  schedulerQueue.add('finalizeRedemptions', null, {
+    jobId: 'finalizeRedemptions',
+  });
   schedulerQueue.add(
     'vaultPerformance',
     { force: true },
