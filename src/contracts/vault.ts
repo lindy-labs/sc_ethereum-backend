@@ -5,7 +5,7 @@ import { wallet } from '../helpers/provider';
 
 import { abi as vaultABI } from '../abis/Vault';
 
-const config = configByNetwork.env();
+const config = configByNetwork();
 
 const vault = new Contract(config.vault, vaultABI, wallet);
 

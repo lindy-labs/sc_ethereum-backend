@@ -30,8 +30,6 @@ const local = () => {
   };
 };
 
-export default {
-  env: () => (process.env.ENV === 'local' ? local() : ropsten()),
-  ropsten,
-  local,
-};
+const config = () => (process.env.ENV === 'local' ? local() : ropsten());
+
+export default config;

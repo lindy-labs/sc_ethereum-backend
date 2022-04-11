@@ -20,7 +20,7 @@ type RedeemOperation = {
   aUstAmount: string;
 };
 
-const config = configByNetwork.env();
+const config = configByNetwork();
 
 export const strategy: Contract = new Contract(
   config.strategy,
