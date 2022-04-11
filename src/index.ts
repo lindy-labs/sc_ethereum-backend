@@ -18,8 +18,6 @@ getDBConnection().then(async (newConnection) => {
 
   await Scheduler.start();
   await API.start();
-
-  await finalizeDeposits();
 });
 
 function handleExit(code?: number) {

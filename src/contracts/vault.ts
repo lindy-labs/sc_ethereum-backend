@@ -1,7 +1,7 @@
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
 
 import configByNetwork from '../config';
-import { Contracts, wallet } from '../helpers/provider';
+import { wallet } from '../helpers/provider';
 
 import { abi as vaultABI } from '../abis/Vault';
 
