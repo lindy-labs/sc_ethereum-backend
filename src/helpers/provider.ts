@@ -1,4 +1,4 @@
-import { Contract, providers, Wallet } from 'ethers';
+import { providers, Wallet } from 'ethers';
 import configByNetwork from '../config';
 
 const config = configByNetwork.env();
