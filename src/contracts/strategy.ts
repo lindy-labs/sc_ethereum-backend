@@ -1,13 +1,11 @@
-import { Contract } from 'ethers';
-import { reduce } from 'lodash';
+import { BigNumber, Contract } from 'ethers';
 import { request, gql } from 'graphql-request';
 
-import { Contracts, wallet } from '../helpers/provider';
-// import { server } from '../api';
-// import { contractCalls } from '../helpers/contracts';
+import { wallet } from '../helpers/provider';
 
 import { addresses } from '../config/addresses';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
+import { server } from '../api';
 
 type DepositOperation = {
   id: string;
@@ -28,27 +26,39 @@ export const strategy: Contract = new Contract(
   wallet,
 );
 
-export async function checkAndFinalizeDeposits() {
+export async function finalizeDeposits() {
   const operations = await depositOperations();
 
   operations.forEach(async (operation: DepositOperation) => {
-    strategy.finishDepositStable(operation.idx, {
-      gasLimit: await strategy.finishDepositStable(operation.idx),
-    });
+    try {
+      await strategy.finishDepositStable(BigNumber.from(operation.idx), {
+        gasLimit: await strategy.estimateGas.finishDepositStable(
+          BigNumber.from(operation.idx),
+        ),
+      });
+    } catch (e) {
+      server.log.error((e as Error).message);
+    }
   });
 }
 
-export async function checkAndFinalizeRedemptions() {
+export async function finalizeRedemptions() {
   const operations = await redeemOperations();
 
   operations.forEach(async (operation: RedeemOperation) => {
-    strategy.finishRedeemStable(operation.idx, {
-      gasLimit: await strategy.finishRedeemStable(operation.idx),
-    });
+    try {
+      await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
+        gasLimit: await strategy.estimateGas.finishRedeemStable(
+          BigNumber.from(operation.idx),
+        ),
+      });
+    } catch (e) {
+      server.log.error((e as Error).message);
+    }
   });
 }
 
-export async function depositOperations(): Promise<DepositOperation[]> {
+async function depositOperations(): Promise<DepositOperation[]> {
   const query = gql`
     {
       depositOperations {
@@ -63,7 +73,7 @@ export async function depositOperations(): Promise<DepositOperation[]> {
   return (await request(process.env.GRAPH_URL!, query)).depositOperations;
 }
 
-export async function redeemOperations(): Promise<RedeemOperation[]> {
+async function redeemOperations(): Promise<RedeemOperation[]> {
   const query = gql`
     {
       redeemOperations {

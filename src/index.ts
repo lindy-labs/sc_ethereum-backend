@@ -4,10 +4,7 @@ import { Connection } from 'typeorm';
 import * as API from './api';
 import getDBConnection from './db/getConnection';
 import * as Scheduler from './scheduler';
-import {
-  checkAndFinalizeDeposits,
-  depositOperations,
-} from './contracts/strategy';
+import { finalizeDeposits } from './contracts/strategy';
 
 let connection: Connection;
 
@@ -16,12 +13,10 @@ getDBConnection().then(async (newConnection) => {
 
   API.server.register(typeorm, { connection: newConnection! });
 
-  await depositOperations();
-
   await Scheduler.start();
   await API.start();
 
-  await checkAndFinalizeDeposits();
+  await finalizeDeposits();
 });
 
 function handleExit(code?: number) {

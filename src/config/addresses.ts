@@ -7,7 +7,7 @@ export const addresses = {
       DAI: '0x2CcC7Ee614212a944e1F034E96A406764EDb675A',
     },
     strategy: {
-      UST: '0x394480300a35558338d32bBE7263d447BA0d409E',
+      UST: '0xFa7447c91989141De3Fd4988810e358119EF2e7f',
     },
   },
 };
