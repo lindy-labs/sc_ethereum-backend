@@ -5,6 +5,7 @@ import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
 import updateInvested from '../jobs/updateInvested';
 import refreshOrganizations from '../jobs/refreshOrganizations';
+import finalizeDeposits from '../jobs/finalizeDeposits';
 
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
@@ -38,6 +39,12 @@ const schedulerWorker = new Worker(
       case 'refreshOrganizations':
         await refreshOrganizations();
         break;
+      case 'finalizeDeposits':
+        await finalizeDeposits();
+        break;
+      case 'finalizeRedemptions':
+        await finalizeDeposits();
+        break;
     }
   },
 
@@ -63,6 +70,20 @@ schedulerQueue.add('refreshOrganizations', null, {
     every: 1000 * 60 * 60 * 4, // every 4 hours
   },
   jobId: 'refreshOrganizations',
+});
+
+schedulerQueue.add('finalizeDeposits', null, {
+  repeat: {
+    every: 1000 * 60 * 60, // every hour
+  },
+  jobId: 'finalizeDeposits',
+});
+
+schedulerQueue.add('finalizeRedemptions', null, {
+  repeat: {
+    every: 1000 * 60 * 60, // every hour
+  },
+  jobId: 'finalizeRedemptions',
 });
 
 schedulerWorker.on('completed', (job: Job, err: Error) => {
