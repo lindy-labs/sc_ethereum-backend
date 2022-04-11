@@ -2,9 +2,13 @@ import { logger } from 'ethers';
 import { Raw } from 'typeorm';
 import { getJobRepository } from '../db';
 
+interface Data {
+  force?: boolean;
+}
+
 export function createJob(name: string, interval: number, fn: () => any) {
-  return async () => {
-    if (await alreadyRun(name, interval)) return;
+  return async (data: Data | null) => {
+    if (!data?.force && (await alreadyRun(name, interval))) return;
 
     const result = await fn();
 

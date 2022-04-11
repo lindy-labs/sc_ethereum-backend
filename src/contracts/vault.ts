@@ -1,51 +1,26 @@
-import { reduce, drop, dropRight, mapValues } from 'lodash';
-import { BigNumber, Contract } from 'ethers';
-import assert from 'assert/strict';
+import { BigNumber, Contract, providers, Wallet } from 'ethers';
 
+import configByNetwork from '../config';
 import { Contracts, wallet } from '../helpers/provider';
-import { contractCalls } from '../helpers/contracts';
 
-import { addresses } from '../config/addresses';
 import { abi as vaultABI } from '../abis/Vault';
 
-assert(process.env.WALLET_MNEMONIC);
+const config = configByNetwork.ropsten();
 
-export const vaults: Contracts = reduce(
-  addresses.ropsten.vault,
-  (memo: Contracts, address: string, vault: string) => {
-    memo[vault] = new Contract(address, vaultABI, wallet);
-    return memo;
-  },
-  {},
-);
+const vault = new Contract(config.vault, vaultABI, wallet);
 
-export async function vaultPerformances(): Promise<BigNumber[]> {
-  const response = await Promise.allSettled([
-    ...contractCalls(vaults, 'totalShares'),
-    ...contractCalls(vaults, 'totalUnderlyingMinusSponsored'),
-  ]);
+// At first, 1 wei is 1x10^18 shares.
+// That means that the value of a single share in wei is too low to represent without decimal places.
+// Because of that, we measure the vault's performance as the value of 10^18 shares.
+export async function vaultPerformance(): Promise<number> {
+  const shares = await vault.totalShares();
+  const underlying = await vault.totalUnderlyingMinusSponsored();
 
-  const metrics = response.map((values) => {
-    // When rejected, fall back to BigNumber 0.
-    if (values.status === 'rejected') {
-      return BigNumber.from('0');
-    }
-
-    return values.value;
-  });
-
-  const shares = dropRight(metrics, metrics.length / 2);
-  const underlying = drop(metrics, metrics.length / 2);
-
-  return shares.map((totalShare: BigNumber, i: number) => {
-    try {
-      return totalShare.div(underlying[i]);
-    } catch (_e) {
-      return BigNumber.from('0');
-    }
-  });
+  return underlying.mul(BigNumber.from(10).pow(18)).div(shares);
 }
 
 export async function updateInvested() {
-  mapValues(vaults, (vault) => vault.updateInvested('0x'));
+  return vault.updateInvested('0x', {
+    gasLimit: await vault.estimateGas.updateInvested('0x'),
+  });
 }

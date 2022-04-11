@@ -1,5 +1,6 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import * as Monitoring from '../monitoring';
 
 import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
@@ -31,19 +32,19 @@ const schedulerWorker = new Worker(
   async (job: Job) => {
     switch (job.name) {
       case 'updateInvested':
-        // await updateInvested();
+        await updateInvested(job.data);
         break;
       case 'vaultPerformance':
-        await collectPerformance();
+        await collectPerformance(job.data);
         break;
       case 'refreshOrganizations':
-        await refreshOrganizations();
+        await refreshOrganizations(job.data);
         break;
       case 'finalizeDeposits':
-        await finalizeDeposits();
+        await finalizeDeposits(job.data);
         break;
       case 'finalizeRedemptions':
-        await finalizeDeposits();
+        await finalizeDeposits(job.data);
         break;
     }
   },
@@ -92,12 +93,27 @@ schedulerWorker.on('completed', (job: Job, err: Error) => {
 
 schedulerWorker.on('failed', (job: Job, err: Error) => {
   logger.error(`${job.id} has failed with ${err.message}`);
+  Monitoring.captureException(err);
 });
 
 export async function start() {
-  schedulerQueue.add('updateInvested', null, {});
-  schedulerQueue.add('vaultPerformance', null, {});
-  schedulerQueue.add('refreshOrganizations', null, {});
+  schedulerQueue.add('updateInvested', null, {
+    jobId: 'updateInvested',
+  });
+  schedulerQueue.add(
+    'vaultPerformance',
+    { force: true },
+    {
+      jobId: 'vaultPerformance',
+    },
+  );
+  schedulerQueue.add(
+    'refreshOrganizations',
+    { force: true },
+    {
+      jobId: 'refreshOrganizations',
+    },
+  );
 }
 
 export async function stop() {
