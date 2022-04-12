@@ -1,5 +1,21 @@
 import assert from 'assert';
 
+const mainnet = () => {
+  assert(process.env.RPC_URL);
+  assert(process.env.MNEMONIC);
+  assert(process.env.VAULT);
+  assert(process.env.STRATEGY);
+  assert(process.env.GRAPH_URL);
+
+  return {
+    vault: process.env.VAULT,
+    strategy: process.env.STRATEGY,
+    rpcURL: process.env.RPC_URL,
+    mnemonic: process.env.MNEMONIC,
+    graphURL: process.env.GRAPH_URL,
+  };
+};
+
 const ropsten = () => {
   assert(process.env.ROPSTEN_RPC_URL);
   assert(process.env.TESTNET_MNEMONIC);
@@ -30,6 +46,15 @@ const local = () => {
   };
 };
 
-const config = () => (process.env.ENV === 'local' ? local() : ropsten());
+const config = () => {
+  switch (process.env.ENV) {
+    case 'testnet':
+      return ropsten();
+    case 'live':
+      return mainnet();
+    default:
+      return local();
+  }
+};
 
 export default config;
