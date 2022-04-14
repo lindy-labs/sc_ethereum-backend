@@ -5,6 +5,7 @@ import { wallet } from '../helpers/provider';
 
 import configByNetwork from '../config';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
+import { abi as anchorOperationStoreABI } from '../abis/AnchorOperationStore';
 import { server } from '../api';
 
 type DepositOperation = {
@@ -28,18 +29,28 @@ export const strategy: Contract = new Contract(
   wallet,
 );
 
+export const anchorOperationStore: Contract = new Contract(
+  config.anchorOperationStore,
+  anchorOperationStoreABI,
+  wallet,
+);
+
 export async function finalizeDeposits() {
   const operations = await depositOperations();
 
+  const currentOperation = await anchorOperationStore.getAvailableOperation();
+
   operations.forEach(async (operation: DepositOperation) => {
-    try {
-      await strategy.finishDepositStable(BigNumber.from(operation.idx), {
-        gasLimit: await strategy.estimateGas.finishDepositStable(
-          BigNumber.from(operation.idx),
-        ),
-      });
-    } catch (e) {
-      server.log.error((e as Error).message);
+    if (operation.id !== currentOperation) {
+      try {
+        await strategy.finishDepositStable(BigNumber.from(operation.idx), {
+          gasLimit: await strategy.estimateGas.finishDepositStable(
+            BigNumber.from(operation.idx),
+          ),
+        });
+      } catch (e) {
+        server.log.error((e as Error).message);
+      }
     }
   });
 }
@@ -47,15 +58,19 @@ export async function finalizeDeposits() {
 export async function finalizeRedemptions() {
   const operations = await redeemOperations();
 
+  const currentOperation = await anchorOperationStore.getAvailableOperation();
+
   operations.forEach(async (operation: RedeemOperation) => {
-    try {
-      await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
-        gasLimit: await strategy.estimateGas.finishRedeemStable(
-          BigNumber.from(operation.idx),
-        ),
-      });
-    } catch (e) {
-      server.log.error((e as Error).message);
+    if (operation.id !== currentOperation) {
+      try {
+        await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
+          gasLimit: await strategy.estimateGas.finishRedeemStable(
+            BigNumber.from(operation.idx),
+          ),
+        });
+      } catch (e) {
+        server.log.error((e as Error).message);
+      }
     }
   });
 }
