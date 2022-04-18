@@ -5,7 +5,6 @@ import { wallet } from '../helpers/provider';
 
 import configByNetwork from '../config';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
-import { abi as anchorOperationStoreABI } from '../abis/AnchorOperationStore';
 import { server } from '../api';
 
 type DepositOperation = {
@@ -26,12 +25,6 @@ const config = configByNetwork();
 export const strategy: Contract = new Contract(
   config.strategy,
   anchorUSTStratABI,
-  wallet,
-);
-
-export const anchorOperationStore: Contract = new Contract(
-  config.anchorOperationStore,
-  anchorOperationStoreABI,
   wallet,
 );
 
@@ -83,7 +76,7 @@ async function depositOperations(): Promise<DepositOperation[]> {
     }
   `;
 
-  return (await request(process.env.GRAPH_URL!, query)).depositOperations;
+  return (await request(config.graphURL, query)).depositOperations;
 }
 
 async function redeemOperations(): Promise<RedeemOperation[]> {
@@ -97,5 +90,5 @@ async function redeemOperations(): Promise<RedeemOperation[]> {
     }
   `;
 
-  return (await request(process.env.GRAPH_URL!, query)).redeemOperations;
+  return (await request(config.graphURL, query)).redeemOperations;
 }

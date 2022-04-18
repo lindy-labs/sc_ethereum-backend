@@ -13,7 +13,6 @@ const mainnet = () => {
     rpcURL: process.env.RPC_URL,
     mnemonic: process.env.MNEMONIC,
     graphURL: process.env.GRAPH_URL,
-    anchorOperationStore: '0x280ac4f337a11d35a7f03e8b42935b34c94f12cf',
   };
 };
 
@@ -30,7 +29,6 @@ const ropsten = () => {
     rpcURL: process.env.ROPSTEN_RPC_URL,
     mnemonic: process.env.TESTNET_MNEMONIC,
     graphURL: process.env.ROPSTEN_GRAPH_URL,
-    anchorOperationStore: '0x49587861df21c77ce8f3cd6831a3b663a4dd1c76',
   };
 };
 
@@ -45,7 +43,6 @@ const local = () => {
     mnemonic:
       'core tornado motion pigeon kiss dish differ asthma much ritual black foil',
     graphURL: 'http://127.0.0.1:8000/subgraphs/name/sandclock-eth',
-    anchorOperationStore: '',
   };
 };
 
