@@ -31,7 +31,9 @@ export const strategy: Contract = new Contract(
 export async function finalizeDeposits() {
   const operations = await depositOperations();
 
-  operations.forEach(async (operation: DepositOperation) => {
+  for (const op of operations) {
+    const operation: DepositOperation = op;
+
     try {
       const gasLimit = await strategy.estimateGas.finishDepositStable(
         BigNumber.from(operation.idx),
@@ -40,16 +42,20 @@ export async function finalizeDeposits() {
       await strategy.finishDepositStable(BigNumber.from(operation.idx), {
         gasLimit,
       });
+
+      break;
     } catch (e) {
       server.log.error((e as Error).message);
     }
-  });
+  }
 }
 
 export async function finalizeRedemptions() {
   const operations = await redeemOperations();
 
-  operations.forEach(async (operation: RedeemOperation) => {
+  for (const op of operations) {
+    const operation: RedeemOperation = op;
+
     const gasLimit = await strategy.estimateGas.finishRedeemStable(
       BigNumber.from(operation.idx),
     );
@@ -58,10 +64,12 @@ export async function finalizeRedemptions() {
       await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
         gasLimit,
       });
+
+      break;
     } catch (e) {
       server.log.error((e as Error).message);
     }
-  });
+  }
 }
 
 async function depositOperations(): Promise<DepositOperation[]> {

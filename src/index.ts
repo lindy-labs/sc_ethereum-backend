@@ -2,7 +2,6 @@ import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
 import * as API from './api';
-import { finalizeDeposits } from './contracts/strategy';
 import getDBConnection from './db/getConnection';
 import * as Monitoring from './monitoring';
 import * as Scheduler from './scheduler';
@@ -18,8 +17,6 @@ getDBConnection().then(async (newConnection) => {
 
   await Scheduler.start();
   await API.start();
-
-  finalizeDeposits();
 });
 
 function handleExit(code?: number) {
