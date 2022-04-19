@@ -4,6 +4,8 @@ import * as Monitoring from '../monitoring';
 import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
 import updateInvested from '../jobs/updateInvested';
+import finalizeDeposits from '../jobs/finalizeDeposits';
+import finalizeRedemptions from '../jobs/finalizeRedemptions';
 import options from '../config/redis';
 
 
@@ -21,6 +23,12 @@ const schedulerWorker = new Worker(
         break;
       case 'vaultPerformance':
         await collectPerformance(job.data);
+        break;
+      case 'finalizeDeposits':
+        await finalizeDeposits(job.data);
+        break;
+      case 'finalizeRedemptions':
+        await finalizeRedemptions(job.data);
         break;
     }
   },
@@ -42,6 +50,20 @@ schedulerQueue.add('vaultPerformance', null, {
   jobId: 'vaultPerformance',
 });
 
+schedulerQueue.add('finalizeDeposits', null, {
+  repeat: {
+    every: 1000 * 60, // every minute
+  },
+  jobId: 'finalizeDeposits',
+});
+
+schedulerQueue.add('finalizeRedemptions', null, {
+  repeat: {
+    every: 1000 * 60, // every minute
+  },
+  jobId: 'finalizeRedemptions',
+});
+
 schedulerWorker.on('completed', (job: Job, err: Error) => {
   logger.info(`${job.id} has been completed!`);
 });
@@ -54,6 +76,12 @@ schedulerWorker.on('failed', (job: Job, err: Error) => {
 export async function start() {
   schedulerQueue.add('updateInvested', null, {
     jobId: 'updateInvested',
+  });
+  schedulerQueue.add('finalizeDeposits', null, {
+    jobId: 'finalizeDeposits',
+  });
+  schedulerQueue.add('finalizeRedemptions', null, {
+    jobId: 'finalizeRedemptions',
   });
   schedulerQueue.add(
     'vaultPerformance',
