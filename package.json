@@ -1,10 +1,12 @@
 {
   "name": "ethereum_backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/index.ts",
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:worker\"",
+    "dev:server": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/server.ts",
+    "dev:worker": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/worker.ts",
     "build": "tsc",
     "server": "NODE_ENV=production node build/server.js",
     "worker": "NODE_ENV=production node build/worker.js",
@@ -38,6 +40,7 @@
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.179",
     "@types/node": "^17.0.21",
+    "concurrently": "^7.1.0",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
