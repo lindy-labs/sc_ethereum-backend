@@ -5,7 +5,6 @@ import { wallet } from '../providers';
 
 import configByNetwork from '../config';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
-import { server } from '../api';
 
 type DepositOperation = {
   id: string;
@@ -20,6 +19,8 @@ type RedeemOperation = {
   aUstAmount: string;
 };
 
+type Operation = DepositOperation | RedeemOperation;
+
 const config = configByNetwork();
 
 export const strategy: Contract = new Contract(
@@ -31,37 +32,35 @@ export const strategy: Contract = new Contract(
 export async function finalizeDeposits() {
   const operations = await depositOperations();
 
-  for (const op of operations) {
-    const operation: DepositOperation = op;
-    const operationIdx = BigNumber.from(operation.idx);
-
-    if (await operationCanBeFinalized('finishDepositStable', operationIdx)) {
-      await strategy.finishDepositStable(BigNumber.from(operation.idx), {
-        gasLimit: await strategy.estimateGas.finishDepositStable(operationIdx),
-      });
-
-      break;
-    }
-
-    continue;
-  }
+  await finalizeOperations(operations, 'finishDepositStable');
 }
 
 export async function finalizeRedemptions() {
   const operations = await redeemOperations();
 
+  await finalizeOperations(operations, 'finishRedeemStable');
+}
+
+async function finalizeOperations(
+  operations: Array<Operation>,
+  functionName: string,
+) {
   for (const op of operations) {
-    const operation: RedeemOperation = op;
+    const operation: Operation = op;
     const operationIdx = BigNumber.from(operation.idx);
 
-    if (await operationCanBeFinalized('finishRedeemStable', operationIdx)) {
-      await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
-        gasLimit: await strategy.estimateGas.finishRedeemStable(operationIdx),
+    // If the operation can be finalized, finalize it and break the loop.
+    // Only one operation can be finalized by ethAnchor at a time, so we
+    // cannot finalize multiple operations in a loop.
+    if (await operationCanBeFinalized(functionName, operationIdx)) {
+      await strategy[functionName](BigNumber.from(operation.idx), {
+        gasLimit: await strategy.estimateGas[functionName](operationIdx),
       });
 
       break;
     }
 
+    // If the operation cannot be finalized, try the next operation.
     continue;
   }
 }
