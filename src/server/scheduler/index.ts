@@ -1,9 +1,9 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 
-import * as Monitoring from '../monitoring';
-import logger from '../logger';
-import refreshOrganizations from '../jobs/refreshOrganizations';
-import options from '../config/redis';
+import * as Monitoring from '../../monitoring';
+import logger from '../../logger';
+import refreshOrganizations from '../../jobs/refreshOrganizations';
+import options from '../../initializers/redis';
 
 const SCHEDULER_QUEUE = 'ServerSchedulerQueue';
 

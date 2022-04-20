@@ -1,13 +1,12 @@
 import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 
-import * as Monitoring from '../monitoring';
-import logger from '../logger';
-import collectPerformance from '../jobs/collectPerformance';
-import updateInvested from '../jobs/updateInvested';
-import finalizeDeposits from '../jobs/finalizeDeposits';
-import finalizeRedemptions from '../jobs/finalizeRedemptions';
-import options from '../config/redis';
-
+import * as Monitoring from '../../monitoring';
+import logger from '../../logger';
+import collectPerformance from '../../jobs/collectPerformance';
+import updateInvested from '../../jobs/updateInvested';
+import finalizeDeposits from '../../jobs/finalizeDeposits';
+import finalizeRedemptions from '../../jobs/finalizeRedemptions';
+import options from '../../initializers/redis';
 
 const SCHEDULER_QUEUE = 'WorkerSchedulerQueue';
 
