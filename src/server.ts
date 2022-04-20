@@ -4,7 +4,7 @@ import { Connection } from 'typeorm';
 import * as API from './api';
 import getDBConnection from './db/getConnection';
 import * as Monitoring from './monitoring';
-import * as Scheduler from './scheduler/server';
+import * as Scheduler from './server/scheduler';
 
 let connection: Connection;
 

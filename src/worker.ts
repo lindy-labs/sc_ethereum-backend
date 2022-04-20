@@ -2,7 +2,7 @@ import { Connection } from 'typeorm';
 
 import getDBConnection from './db/getConnection';
 import * as Monitoring from './monitoring';
-import * as Scheduler from './scheduler/worker';
+import * as Scheduler from './worker/scheduler';
 
 let connection: Connection;
 
