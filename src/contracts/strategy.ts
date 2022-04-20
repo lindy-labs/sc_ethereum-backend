@@ -35,19 +35,15 @@ export async function finalizeDeposits() {
     const operation: DepositOperation = op;
     const operationIdx = BigNumber.from(operation.idx);
 
-    try {
-      await strategy.estimateGas.finishDepositStable(operationIdx);
-    } catch (e) {
-      server.log.error((e as Error).message);
+    if (await operationCanBeFinalized('finishDepositStable', operationIdx)) {
+      await strategy.finishDepositStable(BigNumber.from(operation.idx), {
+        gasLimit: await strategy.estimateGas.finishDepositStable(operationIdx),
+      });
 
-      continue;
+      break;
     }
 
-    await strategy.finishDepositStable(BigNumber.from(operation.idx), {
-      gasLimit: await strategy.estimateGas.finishDepositStable(operationIdx),
-    });
-
-    break;
+    continue;
   }
 }
 
@@ -58,19 +54,34 @@ export async function finalizeRedemptions() {
     const operation: RedeemOperation = op;
     const operationIdx = BigNumber.from(operation.idx);
 
-    try {
-      await strategy.estimateGas.finishRedeemStable(operationIdx);
-    } catch (e) {
-      server.log.error((e as Error).message);
+    if (await operationCanBeFinalized('finishRedeemStable', operationIdx)) {
+      await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
+        gasLimit: await strategy.estimateGas.finishRedeemStable(operationIdx),
+      });
 
-      continue;
+      break;
     }
 
-    await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
-      gasLimit: await strategy.estimateGas.finishRedeemStable(operationIdx),
-    });
+    continue;
+  }
+}
 
-    break;
+/**
+ * Estimates operation finalization transaction without sending
+ * to determine whether the operation is ready to be finalized.
+ * If the transaction estimation throws an exception, the operation is not ready.
+ * If the estimation succeeds then the operation is ready to be finalized.
+ */
+async function operationCanBeFinalized(
+  functionName: string,
+  operationIdx: BigNumber,
+) {
+  try {
+    await strategy.estimateGas[functionName](operationIdx);
+
+    return true;
+  } catch (e) {
+    return false;
   }
 }
 
