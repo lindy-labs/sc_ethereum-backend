@@ -59,9 +59,6 @@ async function finalizeOperations(
 
       break;
     }
-
-    // If the operation cannot be finalized, try the next operation.
-    continue;
   }
 }
 
