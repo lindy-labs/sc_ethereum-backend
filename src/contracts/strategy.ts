@@ -1,7 +1,7 @@
 import { BigNumber, Contract } from 'ethers';
 import { request, gql } from 'graphql-request';
 
-import { wallet } from '../helpers/provider';
+import { wallet } from '../providers';
 
 import configByNetwork from '../config';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
