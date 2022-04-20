@@ -75,14 +75,14 @@ schedulerQueue.add('refreshOrganizations', null, {
 
 schedulerQueue.add('finalizeDeposits', null, {
   repeat: {
-    every: 1000 * 60 * 1, // every minute
+    every: 1000 * 60, // every minute
   },
   jobId: 'finalizeDeposits',
 });
 
 schedulerQueue.add('finalizeRedemptions', null, {
   repeat: {
-    every: 1000 * 60 * 1, // every minute
+    every: 1000 * 60, // every minute
   },
   jobId: 'finalizeRedemptions',
 });

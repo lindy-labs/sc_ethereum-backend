@@ -33,20 +33,21 @@ export async function finalizeDeposits() {
 
   for (const op of operations) {
     const operation: DepositOperation = op;
+    const operationIdx = BigNumber.from(operation.idx);
 
     try {
-      const gasLimit = await strategy.estimateGas.finishDepositStable(
-        BigNumber.from(operation.idx),
-      );
-
-      await strategy.finishDepositStable(BigNumber.from(operation.idx), {
-        gasLimit,
-      });
-
-      break;
+      await strategy.estimateGas.finishDepositStable(operationIdx);
     } catch (e) {
       server.log.error((e as Error).message);
+
+      continue;
     }
+
+    await strategy.finishDepositStable(BigNumber.from(operation.idx), {
+      gasLimit: await strategy.estimateGas.finishDepositStable(operationIdx),
+    });
+
+    break;
   }
 }
 
@@ -55,20 +56,21 @@ export async function finalizeRedemptions() {
 
   for (const op of operations) {
     const operation: RedeemOperation = op;
-
-    const gasLimit = await strategy.estimateGas.finishRedeemStable(
-      BigNumber.from(operation.idx),
-    );
+    const operationIdx = BigNumber.from(operation.idx);
 
     try {
-      await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
-        gasLimit,
-      });
-
-      break;
+      await strategy.estimateGas.finishRedeemStable(operationIdx);
     } catch (e) {
       server.log.error((e as Error).message);
+
+      continue;
     }
+
+    await strategy.finishRedeemStable(BigNumber.from(operation.idx), {
+      gasLimit: await strategy.estimateGas.finishRedeemStable(operationIdx),
+    });
+
+    break;
   }
 }
 
