@@ -1,10 +1,8 @@
-import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
-import * as API from './api';
 import getDBConnection from './db/getConnection';
 import * as Monitoring from './monitoring';
-import * as Scheduler from './scheduler';
+import * as Scheduler from './worker/scheduler';
 
 let connection: Connection;
 
@@ -13,10 +11,7 @@ Monitoring.start();
 getDBConnection().then(async (newConnection) => {
   connection = newConnection;
 
-  API.server.register(typeorm, { connection: newConnection! });
-
   await Scheduler.start();
-  await API.start();
 });
 
 function handleExit(code?: number) {
@@ -24,7 +19,6 @@ function handleExit(code?: number) {
 
   Promise.all([
     connection?.close(),
-    API.server.close(),
     Scheduler.stop(),
     Monitoring.stop(),
   ]).finally(() => process.exit(code || 0));
