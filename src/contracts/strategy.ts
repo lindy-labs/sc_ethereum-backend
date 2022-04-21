@@ -53,7 +53,7 @@ async function finalizeOperations(
     // Only one operation can be finalized by ethAnchor at a time, so we
     // cannot finalize multiple operations in a loop.
     if (await operationCanBeFinalized(functionName, operationIdx)) {
-      await strategy[functionName](BigNumber.from(operation.idx), {
+      await strategy[functionName](operationIdx, {
         gasLimit: await strategy.estimateGas[functionName](operationIdx),
       });
 
