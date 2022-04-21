@@ -31,9 +31,80 @@ export const abi = [
         name: '_perfFeePct',
         type: 'uint16',
       },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'token',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'pool',
+            type: 'address',
+          },
+          {
+            internalType: 'int128',
+            name: 'tokenI',
+            type: 'int128',
+          },
+          {
+            internalType: 'int128',
+            name: 'underlyingI',
+            type: 'int128',
+          },
+        ],
+        internalType: 'struct CurveSwapper.SwapPoolParam[]',
+        name: '_swapPools',
+        type: 'tuple[]',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'pool',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'int128',
+        name: 'tokenI',
+        type: 'int128',
+      },
+      {
+        indexed: false,
+        internalType: 'int128',
+        name: 'underlyingI',
+        type: 'int128',
+      },
+    ],
+    name: 'CurveSwapPoolAdded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+    ],
+    name: 'CurveSwapPoolRemoved',
+    type: 'event',
   },
   {
     anonymous: false,
@@ -298,6 +369,37 @@ export const abi = [
       {
         indexed: true,
         internalType: 'address',
+        name: 'fromToken',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'toToken',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'fromAmount',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'toAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'Swap',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
         name: 'treasury',
         type: 'address',
       },
@@ -435,6 +537,19 @@ export const abi = [
   },
   {
     inputs: [],
+    name: 'SLIPPAGE',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'accumulatedPerfFee',
     outputs: [
       {
@@ -444,6 +559,41 @@ export const abi = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'token',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'pool',
+            type: 'address',
+          },
+          {
+            internalType: 'int128',
+            name: 'tokenI',
+            type: 'int128',
+          },
+          {
+            internalType: 'int128',
+            name: 'underlyingI',
+            type: 'int128',
+          },
+        ],
+        internalType: 'struct CurveSwapper.SwapPoolParam',
+        name: '_param',
+        type: 'tuple',
+      },
+    ],
+    name: 'addPool',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -501,6 +651,16 @@ export const abi = [
       {
         components: [
           {
+            internalType: 'address',
+            name: 'inputToken',
+            type: 'address',
+          },
+          {
+            internalType: 'uint64',
+            name: 'lockDuration',
+            type: 'uint64',
+          },
+          {
             internalType: 'uint256',
             name: 'amount',
             type: 'uint256',
@@ -526,11 +686,6 @@ export const abi = [
             internalType: 'struct IVault.ClaimParams[]',
             name: 'claims',
             type: 'tuple[]',
-          },
-          {
-            internalType: 'uint64',
-            name: 'lockDuration',
-            type: 'uint64',
           },
         ],
         internalType: 'struct IVault.DepositParams',
@@ -628,6 +783,19 @@ export const abi = [
         internalType: 'bytes32',
         name: '',
         type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getUnderlying',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -749,6 +917,19 @@ export const abi = [
   {
     inputs: [
       {
+        internalType: 'address',
+        name: '_inputToken',
+        type: 'address',
+      },
+    ],
+    name: 'removePool',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'bytes32',
         name: 'role',
         type: 'bytes32',
@@ -856,6 +1037,11 @@ export const abi = [
   {
     inputs: [
       {
+        internalType: 'address',
+        name: '_inputToken',
+        type: 'address',
+      },
+      {
         internalType: 'uint256',
         name: '_amount',
         type: 'uint256',
@@ -898,6 +1084,45 @@ export const abi = [
         internalType: 'bool',
         name: '',
         type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'swappers',
+    outputs: [
+      {
+        internalType: 'contract ICurve',
+        name: 'pool',
+        type: 'address',
+      },
+      {
+        internalType: 'uint8',
+        name: 'tokenDecimals',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'underlyingDecimals',
+        type: 'uint8',
+      },
+      {
+        internalType: 'int128',
+        name: 'tokenI',
+        type: 'int128',
+      },
+      {
+        internalType: 'int128',
+        name: 'underlyingI',
+        type: 'int128',
       },
     ],
     stateMutability: 'view',

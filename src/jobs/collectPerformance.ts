@@ -1,5 +1,5 @@
 import { getVaultMetricRepository } from '../db';
-import { vaultPerformance } from '../vault';
+import { vaultPerformance } from '../contracts/vault';
 import { createJob } from './helpers';
 
 const JOB_NAME = 'collectPerformance';

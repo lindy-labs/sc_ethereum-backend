@@ -6,6 +6,8 @@ import logger from '../logger';
 import collectPerformance from '../jobs/collectPerformance';
 import updateInvested from '../jobs/updateInvested';
 import refreshOrganizations from '../jobs/refreshOrganizations';
+import finalizeDeposits from '../jobs/finalizeDeposits';
+import finalizeRedemptions from '../jobs/finalizeRedemptions';
 
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
@@ -39,6 +41,12 @@ const schedulerWorker = new Worker(
       case 'refreshOrganizations':
         await refreshOrganizations(job.data);
         break;
+      case 'finalizeDeposits':
+        await finalizeDeposits(job.data);
+        break;
+      case 'finalizeRedemptions':
+        await finalizeRedemptions(job.data);
+        break;
     }
   },
 
@@ -66,6 +74,20 @@ schedulerQueue.add('refreshOrganizations', null, {
   jobId: 'refreshOrganizations',
 });
 
+schedulerQueue.add('finalizeDeposits', null, {
+  repeat: {
+    every: 1000 * 60, // every minute
+  },
+  jobId: 'finalizeDeposits',
+});
+
+schedulerQueue.add('finalizeRedemptions', null, {
+  repeat: {
+    every: 1000 * 60, // every minute
+  },
+  jobId: 'finalizeRedemptions',
+});
+
 schedulerWorker.on('completed', (job: Job, err: Error) => {
   logger.info(`${job.id} has been completed!`);
 });
@@ -78,6 +100,12 @@ schedulerWorker.on('failed', (job: Job, err: Error) => {
 export async function start() {
   schedulerQueue.add('updateInvested', null, {
     jobId: 'updateInvested',
+  });
+  schedulerQueue.add('finalizeDeposits', null, {
+    jobId: 'finalizeDeposits',
+  });
+  schedulerQueue.add('finalizeRedemptions', null, {
+    jobId: 'finalizeRedemptions',
   });
   schedulerQueue.add(
     'vaultPerformance',

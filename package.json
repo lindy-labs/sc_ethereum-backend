@@ -19,6 +19,8 @@
     "ethers": "^5.5.4",
     "fastify": "^3.27.2",
     "fastify-typeorm-plugin": "^2.2.0",
+    "graphql": "^16.3.0",
+    "graphql-request": "^4.2.0",
     "lodash": "^4.17.21",
     "pg": "^8.7.3",
     "pino": "^7.9.1",

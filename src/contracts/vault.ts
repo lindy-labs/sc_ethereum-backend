@@ -1,17 +1,11 @@
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
 
-import configByNetwork from './config';
-import { abi as vaultABI } from './abis/Vault';
+import configByNetwork from '../config';
+import { wallet } from '../providers';
 
-const config = configByNetwork.ropsten();
+import { abi as vaultABI } from '../abis/Vault';
 
-const provider: providers.WebSocketProvider = new providers.WebSocketProvider(
-  config.rpcURL || 'http://127.0.0.1:8545',
-);
-
-const wallet: Wallet = Wallet.fromMnemonic(config.mnemonic as string).connect(
-  provider,
-);
+const config = configByNetwork();
 
 const vault = new Contract(config.vault, vaultABI, wallet);
 
