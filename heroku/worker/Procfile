@@ -1,0 +1,2 @@
+web: yarn start:worker
+release: $(yarn bin typeorm) migration:run
