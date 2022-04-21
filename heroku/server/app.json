@@ -1,0 +1,11 @@
+{
+  "name": "Sandclock Ethereum Backend - Server",
+  "description": "Backend's Server Process",
+  "repository": "https://github.com/lindy-labs/sc_ethereum-backend",
+  "addons": ["heroku-postgresql:hobby-dev", "heroku-redis:hobby-dev"],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-multi-procfile.git"
+    }
+  ]
+}
