@@ -1,5 +1,5 @@
 {
   "name": "Sandclock Ethereum Backend",
-  "repository": "https://github.com/lindy-labs/sc_solidity-contracts",
+  "repository": "https://github.com/lindy-labs/sc_ethereum-backend",
   "addons": ["heroku-postgresql:hobby-dev", "heroku-redis:hobby-dev"]
 }
