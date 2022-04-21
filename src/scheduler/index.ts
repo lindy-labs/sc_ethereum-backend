@@ -7,6 +7,7 @@ import collectPerformance from '../jobs/collectPerformance';
 import updateInvested from '../jobs/updateInvested';
 import refreshOrganizations from '../jobs/refreshOrganizations';
 import finalizeDeposits from '../jobs/finalizeDeposits';
+import finalizeRedemptions from '../jobs/finalizeRedemptions';
 
 const SCHEDULER_QUEUE = 'SchedulerQueue';
 
@@ -44,7 +45,7 @@ const schedulerWorker = new Worker(
         await finalizeDeposits(job.data);
         break;
       case 'finalizeRedemptions':
-        await finalizeDeposits(job.data);
+        await finalizeRedemptions(job.data);
         break;
     }
   },
