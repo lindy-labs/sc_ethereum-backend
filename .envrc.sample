@@ -15,3 +15,4 @@ export GIVING_BLOCK_USERNAME=sandclock
 export POSTGRESQL_PASSWORD=postgres
 export POSTGRESQL_USER=postgres
 export REDIS_URL="redis://127.0.0.1:6379"
+export FRONTEND_URL=http://localhost:3000
