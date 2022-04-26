@@ -19,6 +19,7 @@
     "bullmq": "^1.78.1",
     "ethers": "^5.5.4",
     "fastify": "^3.27.2",
+    "fastify-cors": "^6.0.3",
     "fastify-typeorm-plugin": "^2.2.0",
     "graphql": "^16.3.0",
     "graphql-request": "^4.2.0",
