@@ -28,12 +28,11 @@ server.setErrorHandler(async (error, request, reply) => {
 
   const statusCode = error.statusCode! >= 400 ? error.statusCode : 500;
 
-  if (statusCode! >= 500)
-    Monitoring.captureException(error);
+  if (statusCode! >= 500) Monitoring.captureException(error);
 
-  reply.code(statusCode!)
-  reply.send(statusCode! >= 500 ? 'Internal server error' : error.message)
-})
+  reply.code(statusCode!);
+  reply.send(statusCode! >= 500 ? 'Internal server error' : error.message);
+});
 
 server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
