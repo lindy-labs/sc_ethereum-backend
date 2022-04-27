@@ -1,11 +1,9 @@
-import { assert } from 'console';
 import fastify from 'fastify';
 import cors from 'fastify-cors';
 
 import logger from '../logger';
+import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
-
-assert(process.env.FRONTEND_URL);
 
 export const server = fastify({
   logger,
@@ -24,6 +22,15 @@ server.register(cors, {
   // strictPreflight: Enforces strict requirement of the CORS preflight request headers (Access-Control-Request-Method and Origin) as defined by the W3C CORS specification.
   // hideOptionsRoute: hide options route from the documentation built using fastify-swagger (default: true).
 });
+
+server.setErrorHandler(async (error, request, reply) => {
+  request.log.error(error);
+  Monitoring.captureException(error);
+
+  const statusCode = error.statusCode! >= 400 ? error.statusCode : 500;
+  reply.code(statusCode!)
+  reply.send(statusCode! >= 500 ? 'Internal server error' : error.message)
+})
 
 server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
