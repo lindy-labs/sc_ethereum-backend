@@ -25,9 +25,12 @@ server.register(cors, {
 
 server.setErrorHandler(async (error, request, reply) => {
   request.log.error(error);
-  Monitoring.captureException(error);
 
   const statusCode = error.statusCode! >= 400 ? error.statusCode : 500;
+
+  if (statusCode! >= 500)
+    Monitoring.captureException(error);
+
   reply.code(statusCode!)
   reply.send(statusCode! >= 500 ? 'Internal server error' : error.message)
 })
