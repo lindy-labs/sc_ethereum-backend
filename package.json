@@ -4,7 +4,7 @@
   "main": "server.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/dev.ts",
+    "dev": "NODE_ENV=development nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/dev.ts",
     "build": "tsc",
     "start": "NODE_ENV=production node build/server.js",
     "start:worker": "NODE_ENV=production node build/worker.js",

@@ -10,7 +10,7 @@ export const server = fastify({
 });
 
 server.register(cors, {
-  origin: process.env.FRONTEND_URL,
+  origin: process.env.NODE_ENV === 'development' ? '*' : /\*.sandclock.org/,
   methods: ['GET'],
   // allowedHeaders: Configures the Access-Control-Allow-Headers CORS header.
   // exposedHeaders:  Configures the Access-Control-Expose-Headers CORS header.
