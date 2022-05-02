@@ -12,15 +12,6 @@ export const server = fastify({
 server.register(cors, {
   origin: process.env.NODE_ENV === 'development' ? '*' : /\*.sandclock.org/,
   methods: ['GET'],
-  // allowedHeaders: Configures the Access-Control-Allow-Headers CORS header.
-  // exposedHeaders:  Configures the Access-Control-Expose-Headers CORS header.
-  // credentials: Configures the Access-Control-Allow-Credentials CORS header.
-  // maxAge: Configures the Access-Control-Max-Age CORS header.
-  // preflightContinue: Pass the CORS preflight response to the route handler.
-  // optionsSuccessStatus: Provides a status code to use for successful OPTIONS requests.
-  // preflight: You can entirely disable preflight by passing false here (default: true).
-  // strictPreflight: Enforces strict requirement of the CORS preflight request headers (Access-Control-Request-Method and Origin) as defined by the W3C CORS specification.
-  // hideOptionsRoute: hide options route from the documentation built using fastify-swagger (default: true).
 });
 
 server.setErrorHandler(async (error, request, reply) => {
