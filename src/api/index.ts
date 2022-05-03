@@ -16,17 +16,17 @@ server.get('/config', async (_request, reply) => {
   if (process.env.ENV === 'live') {
     reply.callNotFound();
     return;
+  } else {
+    const {rpcURL, vault, graphURL} = configByNetwork();
+
+    reply.code(200);
+    reply.header('Content-Type', 'application/json');
+    reply.send({
+      rpcURL,
+      vault,
+      graphURL
+    });
   }
-
-  const {rpcURL, vault, graphURL} = configByNetwork();
-
-  reply.code(200);
-  reply.header('Content-Type', 'application/json');
-  reply.send({
-    rpcURL,
-    vault,
-    graphURL
-  });
 });
 
 server.get('/api/organizations', async (_request, reply) => {
