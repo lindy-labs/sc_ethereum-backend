@@ -2,6 +2,7 @@ import fastify from 'fastify';
 
 import logger from '../logger';
 import { organizations } from '../organizations';
+import configByNetwork from '../config';
 
 export const server = fastify({
   logger,
@@ -9,6 +10,23 @@ export const server = fastify({
 
 server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
+});
+
+server.get('/config', async (_request, reply) => {
+  if (process.env.ENV === 'live') {
+    reply.callNotFound();
+    return;
+  }
+
+  const {rpcURL, vault, graphURL} = configByNetwork();
+
+  reply.code(200);
+  reply.header('Content-Type', 'application/json');
+  reply.send({
+    rpcURL,
+    vault,
+    graphURL
+  });
 });
 
 server.get('/api/organizations', async (_request, reply) => {
