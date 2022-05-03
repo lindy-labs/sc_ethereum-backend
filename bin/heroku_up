@@ -1,0 +1,17 @@
+#!/bin/bash -ue
+
+heroku apps:create sandclock-backend-worker --region eu -n
+
+heroku addons:create heroku-postgresql:hobby-dev -a sandclock-backend-worker
+
+heroku addons:create heroku-redis:hobby-dev -a sandclock-backend-worker
+
+heroku config:set -a sandclock-backend-worker ENV=$ENV ROPSTEN_RPC_URL=$ROPSTEN_RPC_URL ROPSTEN_VAULT=$ROPSTEN_VAULT ROPSTEN_STRATEGY=$ROPSTEN_STRATEGY ROPSTEN_GRAPH_URL=$ROPSTEN_GRAPH_URL TESTNET_MNEMONIC="$TESTNET_MNEMONIC" SENTRY_DSN=$SENTRY_DSN
+
+heroku buildpacks:add -a sandclock-backend-worker heroku-community/multi-procfile
+
+heroku buildpacks:add -a sandclock-backend-worker heroku/nodejs
+
+heroku config:set -a sandclock-backend-worker PROCFILE=heroku/worker/Procfile
+
+heroku git:remote -a sandclock-backend-worker

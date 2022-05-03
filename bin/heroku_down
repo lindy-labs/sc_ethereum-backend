@@ -1,0 +1,5 @@
+#!/bin/bash -ue
+
+heroku apps:destroy -a sandclock-backend-worker --confirm sandclock-backend-worker
+
+heroku apps:destroy -a sandclock-backend-server --confirm sandclock-backend-server
