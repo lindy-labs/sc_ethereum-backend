@@ -17,14 +17,14 @@ server.get('/config', async (_request, reply) => {
     reply.callNotFound();
     return;
   } else {
-    const {rpcURL, vault, graphURL} = configByNetwork();
+    const { rpcURL, vault, graphURL } = configByNetwork();
 
     reply.code(200);
     reply.header('Content-Type', 'application/json');
     reply.send({
       rpcURL,
       vault,
-      graphURL
+      graphURL,
     });
   }
 });
