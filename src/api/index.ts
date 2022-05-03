@@ -21,8 +21,10 @@ server.setErrorHandler(async (error, request, reply) => {
 
   if (statusCode! >= 500) Monitoring.captureException(error);
 
-  reply.code(statusCode!);
-  reply.send(statusCode! >= 500 ? 'Internal server error' : error.message);
+  error.statusCode = statusCode;
+  error.message = process.env.NODE_ENV === 'production' ? 'Internal Server Error' : error.message;
+
+  reply.send(error);
 });
 
 server.get('/ping', async (_request, _reply) => {
