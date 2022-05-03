@@ -15,7 +15,6 @@ server.get('/ping', async (_request, _reply) => {
 server.get('/config', async (_request, reply) => {
   if (process.env.ENV === 'live') {
     reply.callNotFound();
-    return;
   } else {
     const { rpcURL, vault, graphURL } = configByNetwork();
 
