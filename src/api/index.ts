@@ -1,10 +1,29 @@
 import fastify from 'fastify';
+import cors from 'fastify-cors';
 
 import logger from '../logger';
+import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
 
 export const server = fastify({
   logger,
+});
+
+server.register(cors, {
+  origin: process.env.NODE_ENV === 'development' ? '*' : /\*.sandclock.org/,
+  methods: ['GET'],
+});
+
+server.setErrorHandler(async (error, request, reply) => {
+  request.log.error(error);
+
+  if (!error.statusCode || error.statusCode! >= 500)
+    Monitoring.captureException(error);
+
+  if (process.env.NODE_ENV === 'production')
+    error.message = 'Internal Server Error';
+
+  reply.send(error);
 });
 
 server.get('/ping', async (_request, _reply) => {
