@@ -17,9 +17,11 @@ server.register(cors, {
 server.setErrorHandler(async (error, request, reply) => {
   request.log.error(error);
 
-  if (!error.statusCode) Monitoring.captureException(error);
+  if (!error.statusCode || error.statusCode! >= 500)
+    Monitoring.captureException(error);
 
-  error.message = process.env.NODE_ENV === 'production' ? 'Internal Server Error' : error.message;
+  if (process.env.NODE_ENV === 'production')
+    error.message = 'Internal Server Error';
 
   reply.send(error);
 });
