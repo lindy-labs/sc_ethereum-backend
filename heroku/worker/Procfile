@@ -1,2 +1,3 @@
+web: echo "Worker"
 worker: yarn start:worker
 release: $(yarn bin typeorm) migration:run
