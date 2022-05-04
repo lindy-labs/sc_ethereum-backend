@@ -1,2 +1,2 @@
-web: yarn start:worker
+worker: yarn start:worker
 release: $(yarn bin typeorm) migration:run
