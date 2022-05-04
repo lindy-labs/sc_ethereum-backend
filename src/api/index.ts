@@ -17,11 +17,8 @@ server.register(cors, {
 server.setErrorHandler(async (error, request, reply) => {
   request.log.error(error);
 
-  const statusCode = error.statusCode! >= 400 ? error.statusCode : 500;
+  if (!error.statusCode) Monitoring.captureException(error);
 
-  if (statusCode! >= 500) Monitoring.captureException(error);
-
-  error.statusCode = statusCode;
   error.message = process.env.NODE_ENV === 'production' ? 'Internal Server Error' : error.message;
 
   reply.send(error);
