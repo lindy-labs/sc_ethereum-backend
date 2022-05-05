@@ -37,8 +37,8 @@ const local = () => {
   assert(process.env.LOCAL_STRATEGY);
 
   return {
-    vault: '0x07F269C684E0d1152C2C24eb798DD826a1021656',
-    strategy: '0x1c8967Af415b1516c96c08880aA0E87e82161b9a',
+    vault: '0x092982E6d18d76CE4961910a9D65B6C63436A421',
+    strategy: '0x4E182739a4dE131c6749e2Cf0F9A431d2Ace5Ac4',
     rpcURL: 'http://127.0.0.1:8545',
     mnemonic:
       'core tornado motion pigeon kiss dish differ asthma much ritual black foil',
