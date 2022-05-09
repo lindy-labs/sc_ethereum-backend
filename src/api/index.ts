@@ -4,7 +4,7 @@ import cors from 'fastify-cors';
 import logger from '../logger';
 import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
-import configByNetwork from '../config';
+import config from '../config';
 
 export const server = fastify({
   logger,
@@ -32,7 +32,7 @@ server.get('/ping', async (_request, _reply) => {
 });
 
 server.get('/config', async (_request, reply) => {
-  const { rpcURL, vault, graphURL } = configByNetwork();
+  const { rpcURL, vault, graphURL } = config;
 
   reply.code(200);
   reply.header('Content-Type', 'application/json');
