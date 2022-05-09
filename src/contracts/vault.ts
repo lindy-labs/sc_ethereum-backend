@@ -20,7 +20,7 @@ export async function vaultPerformance(): Promise<number> {
 }
 
 export async function updateInvested() {
-  return vault.updateInvested('0x', {
-    gasLimit: await vault.estimateGas.updateInvested('0x'),
+  return vault.updateInvested({
+    gasLimit: await vault.estimateGas.updateInvested(),
   });
 }
