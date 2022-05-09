@@ -4,6 +4,7 @@ import cors from 'fastify-cors';
 import logger from '../logger';
 import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
+import config from '../config';
 
 export const server = fastify({
   logger,
@@ -28,6 +29,18 @@ server.setErrorHandler(async (error, request, reply) => {
 
 server.get('/ping', async (_request, _reply) => {
   return 'pong\n';
+});
+
+server.get('/config', async (_request, reply) => {
+  const { rpcURL, vault, graphURL } = config;
+
+  reply.code(200);
+  reply.header('Content-Type', 'application/json');
+  reply.send({
+    rpcURL,
+    vault,
+    graphURL,
+  });
 });
 
 server.get('/api/organizations', async (_request, reply) => {
