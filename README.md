@@ -4,9 +4,10 @@
 
 **Requirments:**
 
-* postgres
-* [asdf](https://github.com/asdf-vm/asdf) (you can skip *asdf*, but you need to ensure you are running the node version defined in *.tool-versions*)
-* [direnv](https://direnv.net/) (you can skip *direnv*, but you need to ensure the environment variables defined in *.envrc.sample* are set)
+- postgres
+- [asdf](https://github.com/asdf-vm/asdf) (you can skip _asdf_, but you need to ensure you are running the node version defined in _.tool-versions_)
+- [direnv](https://direnv.net/) (you can skip _direnv_, but you need to ensure the environment variables defined in _.envrc.sample_ are set)
+- [git-crypt](https://direnv.net/)
 
 Setup your environment:
 
