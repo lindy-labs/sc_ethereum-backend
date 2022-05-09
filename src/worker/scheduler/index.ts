@@ -6,12 +6,24 @@ import collectPerformance from '../../jobs/collectPerformance';
 import updateInvested from '../../jobs/updateInvested';
 import finalizeDeposits from '../../jobs/finalizeDeposits';
 import finalizeRedemptions from '../../jobs/finalizeRedemptions';
-import options from '../../initializers/redis';
+import redisConnection from '../../initializers/redis';
 
 const SCHEDULER_QUEUE = 'WorkerSchedulerQueue';
 
-const scheduler = new QueueScheduler(SCHEDULER_QUEUE, options);
-const schedulerQueue = new Queue(SCHEDULER_QUEUE, options);
+const scheduler = new QueueScheduler(SCHEDULER_QUEUE, {
+  connection: redisConnection,
+});
+
+const schedulerQueue = new Queue(SCHEDULER_QUEUE, {
+  connection: redisConnection,
+  defaultJobOptions: {
+    attempts: 2,
+    backoff: {
+      type: 'exponential',
+      delay: 1000,
+    },
+  },
+});
 
 const schedulerWorker = new Worker(
   SCHEDULER_QUEUE,
@@ -20,7 +32,7 @@ const schedulerWorker = new Worker(
       case 'updateInvested':
         await updateInvested(job.data);
         break;
-      case 'vaultPerformance':
+      case 'collectPerformance':
         await collectPerformance(job.data);
         break;
       case 'finalizeDeposits':
@@ -31,36 +43,31 @@ const schedulerWorker = new Worker(
         break;
     }
   },
-
-  options,
+  { connection: redisConnection },
 );
 
 schedulerQueue.add('updateInvested', null, {
   repeat: {
     every: 1000 * 60 * 60, // every hour
   },
-  jobId: 'updateInvested',
 });
 
-schedulerQueue.add('vaultPerformance', null, {
+schedulerQueue.add('collectPerformance', null, {
   repeat: {
     every: 1000 * 60 * 60, // every hour
   },
-  jobId: 'vaultPerformance',
 });
 
 schedulerQueue.add('finalizeDeposits', null, {
   repeat: {
     every: 1000 * 60, // every minute
   },
-  jobId: 'finalizeDeposits',
 });
 
 schedulerQueue.add('finalizeRedemptions', null, {
   repeat: {
     every: 1000 * 60, // every minute
   },
-  jobId: 'finalizeRedemptions',
 });
 
 schedulerWorker.on('completed', (job: Job, err: Error) => {
@@ -73,22 +80,10 @@ schedulerWorker.on('failed', (job: Job, err: Error) => {
 });
 
 export async function start() {
-  schedulerQueue.add('updateInvested', null, {
-    jobId: 'updateInvested',
-  });
-  schedulerQueue.add('finalizeDeposits', null, {
-    jobId: 'finalizeDeposits',
-  });
-  schedulerQueue.add('finalizeRedemptions', null, {
-    jobId: 'finalizeRedemptions',
-  });
-  schedulerQueue.add(
-    'vaultPerformance',
-    { force: true },
-    {
-      jobId: 'vaultPerformance',
-    },
-  );
+  schedulerQueue.add('updateInvested', null);
+  schedulerQueue.add('finalizeDeposits', null);
+  schedulerQueue.add('finalizeRedemptions', null);
+  schedulerQueue.add('collectPerformance', { force: true });
 }
 
 export async function stop() {

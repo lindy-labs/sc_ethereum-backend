@@ -5,11 +5,7 @@ const redisOptions: Redis.RedisOptions = {
   enableReadyCheck: false,
 };
 
-const connection = new Redis(
+export default new Redis(
   process.env.REDIS_URL || 'redis://127.0.0.1:6379',
   redisOptions,
 );
-
-export default {
-  connection,
-};
