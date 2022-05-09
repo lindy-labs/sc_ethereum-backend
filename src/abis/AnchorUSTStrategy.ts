@@ -1,40 +1,67 @@
 export const abi = [
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_vault',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_ethAnchorRouter',
-        type: 'address',
-      },
+      { internalType: 'address', name: '_vault', type: 'address' },
+      { internalType: 'address', name: '_ethAnchorRouter', type: 'address' },
       {
         internalType: 'contract AggregatorV3Interface',
         name: '_aUstToUstFeed',
         type: 'address',
       },
-      {
-        internalType: 'contract IERC20',
-        name: '_ustToken',
-        type: 'address',
-      },
-      {
-        internalType: 'contract IERC20',
-        name: '_aUstToken',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_owner',
-        type: 'address',
-      },
+      { internalType: 'contract IERC20', name: '_ustToken', type: 'address' },
+      { internalType: 'contract IERC20', name: '_aUstToken', type: 'address' },
+      { internalType: 'address', name: '_owner', type: 'address' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
+  { inputs: [], name: 'StrategyAmountZero', type: 'error' },
+  { inputs: [], name: 'StrategyCallerNotManager', type: 'error' },
+  { inputs: [], name: 'StrategyInvalidAUSTRate', type: 'error' },
+  { inputs: [], name: 'StrategyNoAUSTReturned', type: 'error' },
+  { inputs: [], name: 'StrategyNoUST', type: 'error' },
+  { inputs: [], name: 'StrategyNotIVault', type: 'error' },
+  { inputs: [], name: 'StrategyNotRunning', type: 'error' },
+  { inputs: [], name: 'StrategyNothingRedeemed', type: 'error' },
+  { inputs: [], name: 'StrategyOwnerCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'StrategyRouterCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'StrategyUnderlyingCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'StrategyYieldTokenCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'VaultAmountDoesNotMatchParams', type: 'error' },
+  { inputs: [], name: 'VaultAmountLocked', type: 'error' },
+  { inputs: [], name: 'VaultAmountTooLarge', type: 'error' },
+  {
+    inputs: [],
+    name: 'VaultCannotComputeSharesWithoutPrincipal',
+    type: 'error',
+  },
+  { inputs: [], name: 'VaultCannotDeposit0', type: 'error' },
+  { inputs: [], name: 'VaultCannotDepositWhenYieldNegative', type: 'error' },
+  { inputs: [], name: 'VaultCannotSponsor0', type: 'error' },
+  { inputs: [], name: 'VaultCannotWithdrawMoreThanAvailable', type: 'error' },
+  { inputs: [], name: 'VaultClaimPercentageCannotBe0', type: 'error' },
+  { inputs: [], name: 'VaultClaimsDontAddUp', type: 'error' },
+  { inputs: [], name: 'VaultDepositLocked', type: 'error' },
+  { inputs: [], name: 'VaultDestinationCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'VaultInvalidInvestmentFee', type: 'error' },
+  { inputs: [], name: 'VaultInvalidInvestpct', type: 'error' },
+  { inputs: [], name: 'VaultInvalidLockPeriod', type: 'error' },
+  { inputs: [], name: 'VaultInvalidMinLockPeriod', type: 'error' },
+  { inputs: [], name: 'VaultInvalidPerformanceFee', type: 'error' },
+  { inputs: [], name: 'VaultInvalidVault', type: 'error' },
+  { inputs: [], name: 'VaultNoPerformanceFee', type: 'error' },
+  { inputs: [], name: 'VaultNotAllowed', type: 'error' },
+  { inputs: [], name: 'VaultNotDeposit', type: 'error' },
+  { inputs: [], name: 'VaultNotEnoughFunds', type: 'error' },
+  { inputs: [], name: 'VaultNotEnoughToRebalance', type: 'error' },
+  { inputs: [], name: 'VaultNotOwnerOfDeposit', type: 'error' },
+  { inputs: [], name: 'VaultNotSponsor', type: 'error' },
+  { inputs: [], name: 'VaultNothingToDo', type: 'error' },
+  { inputs: [], name: 'VaultOwnerCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'VaultStrategyHasInvestedFunds', type: 'error' },
+  { inputs: [], name: 'VaultStrategyNotSet', type: 'error' },
+  { inputs: [], name: 'VaultTreasuryCannotBe0Address', type: 'error' },
+  { inputs: [], name: 'VaultUnderlyingCannotBe0Address', type: 'error' },
   {
     anonymous: false,
     inputs: [
@@ -100,12 +127,7 @@ export const abi = [
         name: 'operator',
         type: 'address',
       },
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'idx',
-        type: 'uint256',
-      },
+      { indexed: true, internalType: 'uint256', name: 'idx', type: 'uint256' },
       {
         indexed: false,
         internalType: 'uint256',
@@ -131,12 +153,7 @@ export const abi = [
         name: 'operator',
         type: 'address',
       },
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'idx',
-        type: 'uint256',
-      },
+      { indexed: true, internalType: 'uint256', name: 'idx', type: 'uint256' },
       {
         indexed: false,
         internalType: 'uint256',
@@ -200,12 +217,7 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
       {
         indexed: true,
         internalType: 'bytes32',
@@ -225,12 +237,7 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
       {
         indexed: true,
         internalType: 'address',
@@ -250,12 +257,7 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
       {
         indexed: true,
         internalType: 'address',
@@ -275,26 +277,14 @@ export const abi = [
   {
     inputs: [],
     name: 'DEFAULT_ADMIN_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'MANAGER_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -314,68 +304,23 @@ export const abi = [
   {
     inputs: [],
     name: 'aUstToken',
-    outputs: [
-      {
-        internalType: 'contract IERC20',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'applyInvestmentFee',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'contract IERC20', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'depositOperationLength',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'depositOperations',
     outputs: [
-      {
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: 'operator', type: 'address' },
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -384,72 +329,36 @@ export const abi = [
     inputs: [],
     name: 'ethAnchorRouter',
     outputs: [
-      {
-        internalType: 'contract IEthAnchorRouter',
-        name: '',
-        type: 'address',
-      },
+      { internalType: 'contract IEthAnchorRouter', name: '', type: 'address' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'idx',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'idx', type: 'uint256' }],
     name: 'finishDepositStable',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'idx',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'idx', type: 'uint256' }],
     name: 'finishRedeemStable',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
-    ],
+    inputs: [{ internalType: 'bytes32', name: 'role', type: 'bytes32' }],
     name: 'getRoleAdmin',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
     name: 'grantRole',
     outputs: [],
@@ -459,61 +368,29 @@ export const abi = [
   {
     inputs: [],
     name: 'hasAssets',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
     name: 'hasRole',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
     name: 'initRedeemStable',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
-      },
-    ],
+    inputs: [],
     name: 'invest',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -522,91 +399,45 @@ export const abi = [
   {
     inputs: [],
     name: 'investedAssets',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'pendingDeposits',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'pendingRedeems',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'redeemOperationLength',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'redeemOperations',
     outputs: [
-      {
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: 'operator', type: 'address' },
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
     name: 'renounceRole',
     outputs: [],
@@ -615,16 +446,8 @@ export const abi = [
   },
   {
     inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'role',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
     name: 'revokeRole',
     outputs: [],
@@ -632,60 +455,23 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'bytes4',
-        name: 'interfaceId',
-        type: 'bytes4',
-      },
-    ],
+    inputs: [{ internalType: 'bytes4', name: 'interfaceId', type: 'bytes4' }],
     name: 'supportsInterface',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'underlying',
-    outputs: [
-      {
-        internalType: 'contract IERC20',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'ustToken',
-    outputs: [
-      {
-        internalType: 'contract IERC20',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'contract IERC20', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'vault',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -697,13 +483,7 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
     name: 'withdrawToVault',
     outputs: [],
     stateMutability: 'nonpayable',
