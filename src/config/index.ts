@@ -1,60 +1,15 @@
 import assert from 'assert';
 
-const mainnet = () => {
-  assert(process.env.RPC_URL);
-  assert(process.env.MNEMONIC);
-  assert(process.env.VAULT);
-  assert(process.env.STRATEGY);
-  assert(process.env.GRAPH_URL);
+assert(process.env.GRAPH_URL);
+assert(process.env.MNEMONIC);
+assert(process.env.RPC_URL);
+assert(process.env.STRATEGY);
+assert(process.env.VAULT);
 
-  return {
-    vault: process.env.VAULT,
-    strategy: process.env.STRATEGY,
-    rpcURL: process.env.RPC_URL,
-    mnemonic: process.env.MNEMONIC,
-    graphURL: process.env.GRAPH_URL,
-  };
+export default {
+  graphURL: process.env.GRAPH_URL,
+  mnemonic: process.env.MNEMONIC,
+  rpcURL: process.env.RPC_URL,
+  strategy: process.env.STRATEGY,
+  vault: process.env.VAULT,
 };
-
-const ropsten = () => {
-  assert(process.env.ROPSTEN_RPC_URL);
-  assert(process.env.TESTNET_MNEMONIC);
-  assert(process.env.ROPSTEN_VAULT);
-  assert(process.env.ROPSTEN_STRATEGY);
-  assert(process.env.ROPSTEN_GRAPH_URL);
-
-  return {
-    vault: process.env.ROPSTEN_VAULT,
-    strategy: process.env.ROPSTEN_STRATEGY,
-    rpcURL: process.env.ROPSTEN_RPC_URL,
-    mnemonic: process.env.TESTNET_MNEMONIC,
-    graphURL: process.env.ROPSTEN_GRAPH_URL,
-  };
-};
-
-const local = () => {
-  assert(process.env.LOCAL_VAULT);
-  assert(process.env.LOCAL_STRATEGY);
-
-  return {
-    vault: process.env.LOCAL_VAULT,
-    strategy: process.env.LOCAL_STRATEGY,
-    rpcURL: 'http://127.0.0.1:8545',
-    mnemonic:
-      'core tornado motion pigeon kiss dish differ asthma much ritual black foil',
-    graphURL: 'http://127.0.0.1:8000/subgraphs/name/sandclock-eth',
-  };
-};
-
-const config = () => {
-  switch (process.env.ENV) {
-    case 'testnet':
-      return ropsten();
-    case 'live':
-      return mainnet();
-    default:
-      return local();
-  }
-};
-
-export default config;

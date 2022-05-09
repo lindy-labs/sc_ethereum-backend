@@ -3,7 +3,7 @@ import { request, gql } from 'graphql-request';
 
 import { wallet } from '../providers';
 
-import configByNetwork from '../config';
+import config from '../config';
 import { abi as anchorUSTStratABI } from '../abis/AnchorUSTStrategy';
 
 type DepositOperation = {
@@ -20,8 +20,6 @@ type RedeemOperation = {
 };
 
 type Operation = DepositOperation | RedeemOperation;
-
-const config = configByNetwork();
 
 export const strategy: Contract = new Contract(
   config.strategy,
