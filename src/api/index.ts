@@ -13,19 +13,15 @@ server.get('/ping', async (_request, _reply) => {
 });
 
 server.get('/config', async (_request, reply) => {
-  if (process.env.ENV === 'live') {
-    reply.callNotFound();
-  } else {
-    const { rpcURL, vault, graphURL } = configByNetwork();
+  const { rpcURL, vault, graphURL } = configByNetwork();
 
-    reply.code(200);
-    reply.header('Content-Type', 'application/json');
-    reply.send({
-      rpcURL,
-      vault,
-      graphURL,
-    });
-  }
+  reply.code(200);
+  reply.header('Content-Type', 'application/json');
+  reply.send({
+    rpcURL,
+    vault,
+    graphURL,
+  });
 });
 
 server.get('/api/organizations', async (_request, reply) => {
