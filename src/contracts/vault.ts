@@ -1,11 +1,9 @@
 import { BigNumber, Contract, providers, Wallet } from 'ethers';
 
-import configByNetwork from '../config';
+import config from '../config';
 import { wallet } from '../providers';
 
 import { abi as vaultABI } from '../abis/Vault';
-
-const config = configByNetwork();
 
 const vault = new Contract(config.vault, vaultABI, wallet);
 
@@ -20,7 +18,7 @@ export async function vaultPerformance(): Promise<number> {
 }
 
 export async function updateInvested() {
-  return vault.updateInvested('0x', {
-    gasLimit: await vault.estimateGas.updateInvested('0x'),
+  return vault.updateInvested({
+    gasLimit: await vault.estimateGas.updateInvested(),
   });
 }
