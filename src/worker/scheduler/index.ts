@@ -17,7 +17,7 @@ const scheduler = new QueueScheduler(SCHEDULER_QUEUE, {
 const schedulerQueue = new Queue(SCHEDULER_QUEUE, {
   connection: redisConnection,
   defaultJobOptions: {
-    attempts: 2,
+    attempts: 3,
     backoff: {
       type: 'exponential',
       delay: 1000,
