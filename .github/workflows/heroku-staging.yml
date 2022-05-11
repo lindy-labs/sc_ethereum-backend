@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - js/staging_actions
   pull_request:
     branches:
       - main
