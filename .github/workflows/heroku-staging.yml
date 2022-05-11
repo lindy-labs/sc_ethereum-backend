@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - js/staging_actions
   pull_request:
     branches:
       - main
@@ -15,10 +14,10 @@ env:
 
 jobs:
 
-  staging:        
+  heroku-staging:
     
     steps:
-      
+      runs-on: ubuntu-latest
       - name: Check out repository
         uses: actions/checkout@v2
         with:
