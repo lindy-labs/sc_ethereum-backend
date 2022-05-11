@@ -8,10 +8,6 @@ on:
     branches:
       - main
 
-env:
-  HEROKU_SERVER_APP: ${{ secrets.HEROKU_SERVER_APP }}
-  HEROKU_WORKER_APP: ${{ secrets.HEROKU_WORKER_APP }}
-
 jobs:
 
   heroku-staging:
@@ -40,12 +36,20 @@ jobs:
       
       - name: Worker - Add Heroku remote
         run: heroku git:remote --app $HEROKU_WORKER_APP
+        env:
+          HEROKU_WORKER_APP: ${{ secrets.HEROKU_WORKER_APP }}
       
       - name: Worker - Push to Heroku
         run: git push https://git.heroku.com/$HEROKU_WORKER_APP.git HEAD:main
+        env:
+          HEROKU_WORKER_APP: ${{ secrets.HEROKU_WORKER_APP }}
 
       - name: Server - Add Heroku remote
         run: heroku git:remote --app $HEROKU_SERVER_APP
+        env:
+          HEROKU_SERVER_APP: ${{ secrets.HEROKU_SERVER_APP }}
       
       - name: Server - Push to Heroku
         run: git push https://git.heroku.com/$HEROKU_SERVER_APP.git HEAD:main
+        env:
+          HEROKU_SERVER_APP: ${{ secrets.HEROKU_SERVER_APP }}
