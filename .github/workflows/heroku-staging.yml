@@ -31,6 +31,8 @@ jobs:
       
       - name: Worker - Push to Heroku
         run: git push -f https://git.heroku.com/$HEROKU_WORKER_APP.git HEAD:main
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
       - name: Server - Add Heroku remote
         run: heroku git:remote --app $HEROKU_SERVER_APP
@@ -39,3 +41,5 @@ jobs:
       
       - name: Server - Push to Heroku
         run: git push -f https://git.heroku.com/$HEROKU_SERVER_APP.git HEAD:main
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
