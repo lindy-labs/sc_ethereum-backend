@@ -33,15 +33,15 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-      
-      - name: Worker - Add Heroku remote
-        run: heroku git:remote --app ${{ secrets.HEROKU_WORKER_APP }}
-      
-      - name: Worker - Push to Heroku
-        run: git push https://git.heroku.com/${{ secrets.HEROKU_WORKER_APP }}.git HEAD:main
 
       - name: Server - Add Heroku remote
-        run: heroku git:remote --app ${{ secrets.HEROKU_SERVER_APP }}
+        run: heroku git:remote --app sandclock-backend-server
       
       - name: Server - Push to Heroku
-        run: git push https://git.heroku.com/${{ secrets.HEROKU_SERVER_APP }}.git HEAD:main
+        run: git push https://git.heroku.com/sandclock-backend-server.git HEAD:main
+      
+      - name: Worker - Add Heroku remote
+        run: heroku git:remote --app sandclock-backend-worker
+      
+      - name: Worker - Push to Heroku
+        run: git push https://git.heroku.com/sandclock-backend-worker.git HEAD:main
