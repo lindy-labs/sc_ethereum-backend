@@ -1,5 +1,5 @@
 import async from 'async';
-import axios, { Axios } from 'axios';
+import axios from 'axios';
 import _ from 'lodash';
 import logger from '../logger';
 
