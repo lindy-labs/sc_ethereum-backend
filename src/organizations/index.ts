@@ -1,5 +1,5 @@
 import async from 'async';
-import axios from 'axios';
+import axios, { Axios } from 'axios';
 import _ from 'lodash';
 import logger from '../logger';
 
@@ -112,7 +112,10 @@ async function updateOrganizationDetails(organization: Organization) {
 async function getOrganizationById(id: number) {
   const response = await axios.get(`${BASE_URL}/v1/organization/${id}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    validateStatus: status => status <= 400,
   });
+
+  if (response.status == 400) return {};
 
   const data: { organization?: Organization } = response.data.data;
 
@@ -124,9 +127,11 @@ async function getOrganizationById(id: number) {
   return data.organization;
 }
 
-function updateCachedOrganizations(detailedOrganizations: Organization[]) {
+function updateCachedOrganizations(organizations: Organization[]) {
+  const detailedOrganizations = organizations.filter(org => org.categories);
+
   cachedOrganizations = cachedOrganizations
-    .filter(({ id }) => !_.find(detailedOrganizations, { id }))
+    .filter(({ id }) => !_.find(organizations, { id }))
     .concat(detailedOrganizations);
 }
 
