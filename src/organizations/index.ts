@@ -112,7 +112,7 @@ async function updateOrganizationDetails(organization: Organization) {
 async function getOrganizationById(id: number) {
   const response = await axios.get(`${BASE_URL}/v1/organization/${id}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
-    validateStatus: status => status <= 400,
+    validateStatus: (status) => status <= 400,
   });
 
   if (response.status == 400) return {};
@@ -128,7 +128,7 @@ async function getOrganizationById(id: number) {
 }
 
 function updateCachedOrganizations(organizations: Organization[]) {
-  const detailedOrganizations = organizations.filter(org => org.categories);
+  const detailedOrganizations = organizations.filter((org) => org.categories);
 
   cachedOrganizations = cachedOrganizations
     .filter(({ id }) => !_.find(organizations, { id }))
