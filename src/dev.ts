@@ -2,6 +2,7 @@ import typeorm from 'fastify-typeorm-plugin';
 import { Connection } from 'typeorm';
 
 import * as API from './api';
+import {mintDonationNFT} from './contracts/donations';
 import getDBConnection from './db/getConnection';
 import * as Monitoring from './monitoring';
 import * as ServerScheduler from './server/scheduler';
@@ -15,6 +16,8 @@ getDBConnection().then(async (newConnection) => {
   connection = newConnection;
 
   API.server.register(typeorm, { connection: newConnection! });
+
+  await mintDonationNFT();
 
   await ServerScheduler.start();
   await WorkerScheduler.start();
