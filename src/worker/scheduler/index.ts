@@ -22,6 +22,7 @@ const schedulerQueue = new Queue(SCHEDULER_QUEUE, {
       type: 'exponential',
       delay: 1000,
     },
+    removeOnFail: true,
   },
 });
 
