@@ -12,22 +12,44 @@ type Donation = {
   amount: string;
   owner: string;
   destination: string;
+  minted: boolean;
+  burned: boolean;
+  nftId: string;
 };
 
-async function instantiateDonation(address: string) {
-  return new Contract(
-    address,
-    donationABI,
-    wallet,
-  );
-}
+const donationContract = new Contract(config.donation, donationABI, wallet);
 
 export async function mintDonationNFT() {
   const graphDonations = await donations();
 
-  graphDonations.forEach((donation: Donation) => {
-    console.log('donation', donation);
-  });
+  let nftIndex = highestNFTId(graphDonations);
+
+  for (const donation of graphDonations) {
+    if (!donation.minted) {
+      nftIndex += 1;
+
+      console.log(await donationContract.mint(donation.txHash, nftIndex, [
+        {
+          destinationId: parseInt(donation.destination, 16),
+          owner: donation.owner,
+          token: config.underlying,
+          amount: donation.amount,
+          donationId: donation.id,
+        },
+      ]));
+    }
+  }
+}
+
+function highestNFTId(graphDonations: Donation[]): number {
+  let nftId = 0;
+
+  for (const donation of graphDonations) {
+    const id = parseInt(donation.nftId);
+    if (id > nftId) nftId = id;
+  }
+
+  return nftId;
 }
 
 async function donations(): Promise<Donation[]> {
@@ -39,6 +61,9 @@ async function donations(): Promise<Donation[]> {
         amount
         owner
         destination
+        minted
+        burned
+        nftId
       }
     }
   `;
