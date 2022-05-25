@@ -22,9 +22,7 @@ type BatchedDonations = { [key: string]: Donation[] };
 const donationContract = new Contract(config.donation, donationABI, wallet);
 
 export async function mintDonationNFT() {
-  const graphDonations = await donations();
-
-  const batchedDonations = batchDonations(graphDonations);
+  const batchedDonations = batchDonations(await donations());
 
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
@@ -41,8 +39,6 @@ export async function mintDonationNFT() {
         donationId: donation.id,
       };
     });
-
-    await donationContract.mint(key, 0, args);
   }
 }
 
