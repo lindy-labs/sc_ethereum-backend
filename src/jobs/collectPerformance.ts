@@ -12,7 +12,7 @@ export default createJob(JOB_NAME, INTERVAL, async function () {
 
   const metric = repository.create({
     key: 'vault_performance',
-    value: performance.toString(),
+    value: performance,
   });
 
   await repository.save(metric);

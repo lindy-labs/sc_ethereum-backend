@@ -5,6 +5,7 @@ import logger from '../logger';
 import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
 import config from '../config';
+import metricsRoutes from './metrics';
 
 export const server = fastify({
   logger,
@@ -48,6 +49,8 @@ server.get('/api/organizations', async (_request, reply) => {
   reply.header('Content-Type', 'application/json');
   reply.send({ organizations });
 });
+
+server.register(metricsRoutes, { prefix: '/api/metrics' });
 
 export function start() {
   return new Promise((resolve, reject) => {

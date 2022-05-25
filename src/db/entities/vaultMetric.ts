@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+import { DecimalTransformer } from '../decimal.transform';
+
 @Entity()
 export class VaultMetric {
   @PrimaryGeneratedColumn()
@@ -8,12 +10,12 @@ export class VaultMetric {
   @Column()
   key: string;
 
-  @Column()
+  @Column({ type: 'decimal', transformer: new DecimalTransformer() })
   value: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamptz' })
   updatedAt: Date;
 }
