@@ -23,12 +23,12 @@ export class CreateVaultMetric1646127696806 implements MigrationInterface {
           },
           {
             name: 'createdAt',
-            type: 'timestamptz',
+            type: 'timestamp',
             default: 'now()',
           },
           {
             name: 'updatedAt',
-            type: 'timestamptz',
+            type: 'timestamp',
             default: 'now()',
           },
         ],
