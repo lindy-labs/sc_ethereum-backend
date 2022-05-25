@@ -1,4 +1,4 @@
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { request, gql } from 'graphql-request';
 
 import config from '../config';
@@ -17,39 +17,51 @@ type Donation = {
   nftId: string;
 };
 
+type BatchedDonations = { [key: string]: Donation[] };
+
 const donationContract = new Contract(config.donation, donationABI, wallet);
 
 export async function mintDonationNFT() {
   const graphDonations = await donations();
 
-  let nftIndex = highestNFTId(graphDonations);
+  const batchedDonations = batchDonations(graphDonations);
 
-  for (const donation of graphDonations) {
-    if (!donation.minted) {
-      nftIndex += 1;
+  for (const key in batchedDonations) {
+    const donations = batchedDonations[key];
 
-      console.log(await donationContract.mint(donation.txHash, nftIndex, [
-        {
-          destinationId: parseInt(donation.destination, 16),
-          owner: donation.owner,
-          token: config.underlying,
-          amount: donation.amount,
-          donationId: donation.id,
-        },
-      ]));
-    }
+    const args = donations.map((donation: Donation) => {
+      return {
+        destinationId:
+          donation.destination == '0x'
+            ? 0
+            : parseInt(donation.destination, 16),
+        owner: donation.owner,
+        token: config.underlying,
+        amount: BigNumber.from(donation.amount),
+        donationId: donation.id,
+      };
+    });
+
+    await donationContract.mint(key, 0, args);
   }
 }
 
-function highestNFTId(graphDonations: Donation[]): number {
-  let nftId = 0;
+function batchDonations(donations: Donation[]): BatchedDonations {
+  const batchedDonations: BatchedDonations = {};
 
-  for (const donation of graphDonations) {
-    const id = parseInt(donation.nftId);
-    if (id > nftId) nftId = id;
-  }
+  donations.forEach((donation: Donation) => {
+    if (donation.minted) return;
 
-  return nftId;
+    if (!batchedDonations[donation.txHash]) {
+      batchedDonations[donation.txHash] = [donation];
+
+      return;
+    }
+    
+    batchedDonations[donation.txHash].push(donation);
+  });
+
+  return batchedDonations;
 }
 
 async function donations(): Promise<Donation[]> {

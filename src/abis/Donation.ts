@@ -68,6 +68,12 @@ export const abi = [
         "internalType": "uint256",
         "name": "id",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "donationId",
+        "type": "string"
       }
     ],
     "name": "DonationBurned",
@@ -117,6 +123,12 @@ export const abi = [
         "internalType": "address",
         "name": "owner",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "donationId",
+        "type": "string"
       }
     ],
     "name": "DonationMinted",
@@ -335,6 +347,11 @@ export const abi = [
         "internalType": "uint256",
         "name": "_id",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "donationId",
+        "type": "string"
       }
     ],
     "name": "burn",
@@ -348,6 +365,11 @@ export const abi = [
         "internalType": "uint256[]",
         "name": "_ids",
         "type": "uint256[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "donationIds",
+        "type": "string[]"
       }
     ],
     "name": "burnBatch",
@@ -549,6 +571,11 @@ export const abi = [
             "internalType": "uint256",
             "name": "amount",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "donationId",
+            "type": "string"
           }
         ],
         "internalType": "struct Donations.DonationParams[]",
