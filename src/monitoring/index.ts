@@ -5,6 +5,11 @@ import { RewriteFrames } from '@sentry/integrations';
 const options = {
   attachStacktrace: true,
   dsn: process.env.SENTRY_DSN,
+  beforeSend(event: Sentry.Event) {
+    return event.exception!.values![0].value!.match(/indexing_error:/)
+      ? null
+      : event;
+  },
   environment: process.env.NODE_ENV,
   integrations: [
     new RewriteFrames({
