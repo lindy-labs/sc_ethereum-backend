@@ -25,7 +25,7 @@ async function alreadyRun(name: string, interval: number) {
     where: {
       name,
       createdAt: Raw(
-        (alias) => `${alias} >= (NOW() - INTERVAL '${interval} hours')`,
+        (alias) => `DATE_TRUNC('second', ${alias}) > (DATE_TRUNC('second', NOW()) - INTERVAL '${interval} hours')`,
       ),
     },
     order: {
