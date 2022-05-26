@@ -39,6 +39,8 @@ export async function mintDonationNFT() {
         donationId: donation.id,
       };
     });
+
+    await donationContract.mint(key, 0, args);
   }
 }
 
