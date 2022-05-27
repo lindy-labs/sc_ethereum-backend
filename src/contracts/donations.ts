@@ -12,17 +12,33 @@ type Donation = {
   amount: string;
   owner: string;
   destination: string;
+};
+
+type DonationMint = {
+  id: string;
+  burned: boolean;
+  nftId: string;
+};
+
+type StitchedDonation = {
+  id: string;
+  txHash: string;
+  amount: string;
+  owner: string;
+  destination: string;
   minted: boolean;
   burned: boolean;
   nftId: string;
 };
 
-type BatchedDonations = { [key: string]: Donation[] };
+type BatchedDonations = { [key: string]: StitchedDonation[] };
+
+type StitchedDonations = { [key: string]: StitchedDonation };
 
 const donationContract = new Contract(config.donation, donationABI, wallet);
 
 export async function mintDonationNFT() {
-  const batchedDonations = batchDonations(await donations());
+  const batchedDonations = batchDonations(stitchDonations(await donations(), await donationMints()));
 
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
@@ -44,20 +60,40 @@ export async function mintDonationNFT() {
   }
 }
 
-function batchDonations(donations: Donation[]): BatchedDonations {
-  const batchedDonations: BatchedDonations = {};
+function stitchDonations(donations: Donation[], donationMints: DonationMint[]): StitchedDonations {
+  const donationsMap: StitchedDonations = {};
 
   donations.forEach((donation: Donation) => {
-    if (donation.minted) return;
+    donationsMap[donation.id] = donation as StitchedDonation;
+  });
+
+  donationMints.forEach((donationMint: DonationMint) => {
+    donationsMap[donationMint.id] = {
+      ...donationsMap[donationMint.id],
+      minted: true,
+      ...donationMint,
+    };
+  });
+
+  return donationsMap;
+}
+
+function batchDonations(donations: StitchedDonations): BatchedDonations {
+  const batchedDonations: BatchedDonations = {};
+
+  for (const key in donations) {
+    const donation = donations[key];
+
+    if (donation.minted) continue;
 
     if (!batchedDonations[donation.txHash]) {
       batchedDonations[donation.txHash] = [donation];
 
-      return;
+      continue;
     }
     
     batchedDonations[donation.txHash].push(donation);
-  });
+  }
 
   return batchedDonations;
 }
@@ -71,12 +107,23 @@ async function donations(): Promise<Donation[]> {
         amount
         owner
         destination
-        minted
+      }
+    }
+  `;
+
+  return (await request(config.graphURL, query)).donations;
+}
+
+async function donationMints(): Promise<DonationMint[]> {
+  const query = gql`
+    {
+      donationMints {
+        id
         burned
         nftId
       }
     }
   `;
 
-  return (await request(config.graphURL, query)).donations;
+  return (await request(config.graphURL, query)).donationMints;
 }
