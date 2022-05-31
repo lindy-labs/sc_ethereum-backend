@@ -41,12 +41,8 @@ schedulerQueue.add('refreshOrganizations', null, {
   },
 });
 
-schedulerWorker.on('completed', (job: Job, err: Error) => {
-  logger.info(`${job.id} has been completed!`);
-});
-
 schedulerWorker.on('failed', (job: Job, err: Error) => {
-  logger.error(`${job.id} has failed with ${err.message}`);
+  logger.error(`${job.id} failed with ${err.message}`);
   Monitoring.captureException(err);
 });
 

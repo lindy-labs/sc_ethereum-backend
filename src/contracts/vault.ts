@@ -1,8 +1,8 @@
-import { BigNumber, Contract, providers, Wallet } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { Decimal } from 'decimal.js';
 
 import config from '../config';
-import { wallet } from '../providers';
+import { wallet, provider } from '../providers';
 
 import { abi as vaultABI } from '../abis/Vault';
 
@@ -21,7 +21,11 @@ export async function vaultPerformance() {
 }
 
 export async function updateInvested() {
-  return vault.updateInvested({
-    gasLimit: await vault.estimateGas.updateInvested(),
-  });
+  const { maxInvestableAmount, alreadyInvested } = await vault.investState();
+
+  if (Math.abs(maxInvestableAmount - alreadyInvested) > Math.pow(10, 18)) {
+    await vault.updateInvested({
+      gasLimit: await vault.estimateGas.updateInvested(),
+    });
+  }
 }
