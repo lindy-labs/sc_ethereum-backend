@@ -1,4 +1,4 @@
-export ENV=local
+export CHAIN_ID=1
 export GIVING_BLOCK_PASSWORD=somepassword
 export GIVING_BLOCK_USERNAME=sandclock
 export GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
