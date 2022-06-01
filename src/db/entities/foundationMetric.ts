@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+} from 'typeorm';
 
+import { VaultMetric } from './vaultMetric';
 import { BigIntTransformer } from '../bigint.transformer';
 
 @Entity()
@@ -18,6 +25,10 @@ export class FoundationMetric {
 
   @Column({ transformer: new BigIntTransformer() })
   shares: string;
+
+  @ManyToOne(() => VaultMetric)
+  @JoinColumn()
+  vaultMetric: VaultMetric;
 
   @Column({ type: 'timestamptz' })
   createdAt: Date;
