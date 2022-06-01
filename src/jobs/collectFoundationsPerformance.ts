@@ -6,7 +6,7 @@ import { getFoundationMetricRepository } from '../db';
 
 const query = gql`
   {
-    foundations(first: 5) {
+    foundations {
       id
       amountDeposited
       shares
