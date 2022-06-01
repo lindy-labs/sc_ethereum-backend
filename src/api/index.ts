@@ -33,14 +33,15 @@ server.get('/ping', async (_request, _reply) => {
 });
 
 server.get('/config', async (_request, reply) => {
-  const { rpcURL, vault, graphURL } = config;
+  const { chainID, graphURL, rpcURL, vault } = config;
 
   reply.code(200);
   reply.header('Content-Type', 'application/json');
   reply.send({
+    chainID,
+    graphURL,
     rpcURL,
     vault,
-    graphURL,
   });
 });
 
