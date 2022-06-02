@@ -33,7 +33,7 @@ const INTERVAL = 12;
 export default createJob(JOB_NAME, INTERVAL, async function () {
   const { foundations }: Response = await request(config.graphURL, query);
 
-  const foundaionMetricsRaw = await Promise.all(
+  const foundationMetricsRaw = await Promise.all(
     foundations.map(async (foundation) => ({
       foundation: foundation.id,
       amountClaimed: foundation.amountClaimed,
@@ -55,12 +55,10 @@ export default createJob(JOB_NAME, INTERVAL, async function () {
       .save(vaultMetricRaw);
 
     await transactionalEntityManager.getRepository(FoundationMetric).save(
-      foundaionMetricsRaw.map((foundation) => ({
+      foundationMetricsRaw.map((foundation) => ({
         ...foundation,
         vaultMetric: vaultMetric,
       })),
     );
   });
-
-  console.log('done');
 });
