@@ -1,4 +1,4 @@
-import { logger } from 'ethers';
+import logger, { Logger } from '../logger';
 import { Raw } from 'typeorm';
 import { getJobRepository } from '../db';
 
@@ -6,13 +6,27 @@ interface Data {
   force?: boolean;
 }
 
-export function createJob(name: string, interval: number, fn: () => any) {
+interface Context {
+  logger: Logger;
+}
+
+export function createJob(
+  name: string,
+  interval: number,
+  fn: (ctx: Context) => any,
+) {
+  const context = {
+    logger: logger.child({
+      job: name,
+    }),
+  };
+
   return async (data: Data | null) => {
     if (!data?.force && (await alreadyRun(name, interval))) return;
 
-    const result = await fn();
+    const result = await fn(context);
 
-    await finishJob(name);
+    await finishJob(name, context);
 
     return result;
   };
@@ -36,12 +50,12 @@ async function alreadyRun(name: string, interval: number) {
   return !!job;
 }
 
-async function finishJob(name: string) {
+async function finishJob(name: string, context: Context) {
   const repository = await getJobRepository();
 
   await repository.save({
     name,
   });
 
-  logger.info(`Finished running job ${name}`);
+  context.logger.info(`Job finished`);
 }
