@@ -111,7 +111,7 @@ async function donations(): Promise<Donation[]> {
     }
   `;
 
-  return (await request(config.graphURL, query)).donations;
+  return (await request(config.graphURL.eth, query)).donations;
 }
 
 async function donationMints(): Promise<DonationMint[]> {
@@ -125,5 +125,5 @@ async function donationMints(): Promise<DonationMint[]> {
     }
   `;
 
-  return (await request(config.graphURL, query)).donationMints;
+  return (await request(config.graphURL.polygon, query)).donationMints;
 }

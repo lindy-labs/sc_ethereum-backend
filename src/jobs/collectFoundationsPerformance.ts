@@ -32,7 +32,7 @@ const INTERVAL = 12;
 export default createJob(JOB_NAME, INTERVAL, async function () {
   const repository = await getFoundationMetricRepository();
 
-  const { foundations }: Response = await request(config.graphURL, query);
+  const { foundations }: Response = await request(config.graphURL.eth, query);
 
   await Promise.all(
     foundations.map(async (foundation) => {

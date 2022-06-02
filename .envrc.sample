@@ -1,7 +1,8 @@
 export CHAIN_ID=1
 export GIVING_BLOCK_PASSWORD=somepassword
 export GIVING_BLOCK_USERNAME=sandclock
-export GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
+export ETH_GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
+export POLY_GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-polygon
 export MNEMONIC="the mnemonic words and such"
 export POSTGRESQL_PASSWORD=postgres
 export POSTGRESQL_USER=postgres
