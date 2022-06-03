@@ -1,4 +1,4 @@
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, Wallet } from 'ethers';
 import { request, gql } from 'graphql-request';
 
 import config from '../config';
@@ -38,29 +38,63 @@ type StitchedDonations = { [key: string]: StitchedDonation };
 const donationContract = new Contract(config.donation, donationABI, wallet);
 
 export async function mintDonationNFT() {
-  const batchedDonations = batchDonations(stitchDonations(await donations(), await donationMints()));
+  // const batchedDonations = batchDonations(
+  //   stitchDonations(await donations(), await donationMints()),
+  // );
 
-  for (const key in batchedDonations) {
-    const donations = batchedDonations[key];
+  for (let i = 250; i > 0; i -= 1) {
+    console.log(`trying with ${i} in one batch`);
+    try {
+      const batchedDonations = batchDonations(await mockStitchedDonations(i));
 
-    const args = donations.map((donation: Donation) => {
-      return {
-        destinationId:
-          donation.destination == '0x'
-            ? 0
-            : parseInt(donation.destination, 16),
-        owner: donation.owner,
-        token: config.underlying,
-        amount: BigNumber.from(donation.amount),
-        donationId: donation.id,
-      };
-    });
+      for (const key in batchedDonations) {
+        const donations = batchedDonations[key];
 
-    await donationContract.mint(key, 0, args);
+        const args = donations.map((donation: Donation) => {
+          return {
+            destinationId:
+              donation.destination == '0x' ? 0 : parseInt(donation.destination, 16),
+            owner: donation.owner,
+            token: config.underlying,
+            amount: BigNumber.from(donation.amount),
+            donationId: donation.id,
+          };
+        });
+
+        await donationContract.mint(key, 0, args);
+
+        break;
+      }
+    } catch (e) {
+      continue;
+    }
   }
 }
 
-function stitchDonations(donations: Donation[], donationMints: DonationMint[]): StitchedDonations {
+async function mockStitchedDonations(batchLimit: number): Promise<StitchedDonations> {
+  const donations: StitchedDonations = {};
+
+  for (let i = 0; i < batchLimit; i += 1) {
+    const donationId = `some-donation-id-${i}`;
+    donations[donationId] = {
+      id: donationId,
+      txHash: '0xb5c8bd9430b6cc87a0e2fe110ece6bf527fa4f170a4bc8cd032f768fc5219838',
+      amount: BigNumber.from(1000).mul(BigNumber.from(10).pow(18)).toString(),
+      owner: await Wallet.createRandom().getAddress(),
+      destination: `${5}`,
+      minted: false,
+      burned: false,
+      nftId: `${i}`,
+    };
+  }
+
+  return donations;
+}
+
+function stitchDonations(
+  donations: Donation[],
+  donationMints: DonationMint[],
+): StitchedDonations {
   const donationsMap: StitchedDonations = {};
 
   donations.forEach((donation: Donation) => {
@@ -91,7 +125,7 @@ function batchDonations(donations: StitchedDonations): BatchedDonations {
 
       continue;
     }
-    
+
     batchedDonations[donation.txHash].push(donation);
   }
 
