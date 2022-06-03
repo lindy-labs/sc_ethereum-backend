@@ -43,12 +43,13 @@ export async function mintDonationNFT() {
   // );
 
   for (let i = 250; i > 0; i -= 1) {
-    console.log(`trying with ${i} in one batch`);
     try {
       const batchedDonations = batchDonations(await mockStitchedDonations(i));
 
       for (const key in batchedDonations) {
         const donations = batchedDonations[key];
+
+        console.log(`trying with ${donations.length} in one batch`);
 
         const args = donations.map((donation: Donation) => {
           return {
@@ -62,11 +63,17 @@ export async function mintDonationNFT() {
         });
 
         await donationContract.mint(key, 0, args);
-
-        break;
       }
     } catch (e) {
-      continue;
+      if ((e as Error).message.includes('ran out of gas')) {
+        console.log('ran out of gas');
+
+        continue;
+      }
+
+      console.log('something else');
+
+      break;
     }
   }
 }
