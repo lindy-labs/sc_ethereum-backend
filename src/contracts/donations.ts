@@ -31,7 +31,7 @@ type StitchedDonation = {
   nftId: string;
 };
 
-type BatchedDonations = { [key: string]: StitchedDonation[] };
+type BatchedDonations = { [key: string]: StitchedDonation[][] };
 
 type StitchedDonations = { [key: string]: StitchedDonation };
 
@@ -43,20 +43,24 @@ export async function mintDonationNFT() {
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
 
-    const args = donations.map((donation: Donation) => {
-      return {
-        destinationId:
-          donation.destination == '0x'
-            ? 0
-            : parseInt(donation.destination, 16),
-        owner: donation.owner,
-        token: config.underlying,
-        amount: BigNumber.from(donation.amount),
-        donationId: donation.id,
-      };
-    });
+    for (let batchNumber = 0; batchNumber < donations.length; batchNumber += 1) {
+      const donationBatch = donations[batchNumber];
 
-    await donationContract.mint(key, 0, args);
+      const args = donationBatch.map((donation: StitchedDonation) => {
+        return {
+          destinationId:
+            donation.destination == '0x'
+              ? 0
+              : parseInt(donation.destination, 16),
+          owner: donation.owner,
+          token: config.underlying,
+          amount: BigNumber.from(donation.amount),
+          donationId: donation.id,
+        };
+      });
+
+      await donationContract.mint(key, batchNumber, args);
+    }
   }
 }
 
@@ -81,18 +85,33 @@ function stitchDonations(donations: Donation[], donationMints: DonationMint[]): 
 function batchDonations(donations: StitchedDonations): BatchedDonations {
   const batchedDonations: BatchedDonations = {};
 
+  let batchNumbers: { [txHash: string]: number } = {};
   for (const key in donations) {
     const donation = donations[key];
 
+    // Keep track of batchNumber for each set of donations in a transaction.
+    if (!batchNumbers[donation.txHash]) {
+      batchNumbers[donation.txHash] = 0;
+    }
+
+    // Skip already minted donations.
     if (donation.minted) continue;
 
+    // Initialize 2D array if this transaction key has no previous donation batch.
     if (!batchedDonations[donation.txHash]) {
-      batchedDonations[donation.txHash] = [donation];
+      batchedDonations[donation.txHash] = [[donation]];
 
       continue;
     }
     
-    batchedDonations[donation.txHash].push(donation);
+    // Increment the batchNumber for specified txHash if batchLimit has been reached.
+    // This is done to prevent hitting transaction gas limit.
+    if (batchedDonations[donation.txHash][batchNumbers[donation.txHash]].length >= 240) {
+      batchNumbers[donation.txHash] += 1;
+    }
+
+    // Push the donation into its corresponding donation batch.
+    batchedDonations[donation.txHash][batchNumbers[donation.txHash]].push(donation);
   }
 
   return batchedDonations;
