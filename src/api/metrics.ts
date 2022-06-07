@@ -62,13 +62,6 @@ export default function (
           performance,
           createdAt,
         }) => {
-          console.log({
-            shares,
-            amountClaimed,
-            amountDeposited,
-            performance,
-            createdAt,
-          });
           return {
             value: Decimal.max(
               0,
