@@ -43,6 +43,7 @@ export default function (
         .select([
           'foundation_metric.shares as shares',
           'foundation_metric.amountClaimed as "amountClaimed"',
+          'foundation_metric.amountDeposited as "amountDeposited"',
           'v.value as performance',
           'foundation_metric.createdAt as "createdAt"',
         ])
@@ -54,12 +55,28 @@ export default function (
         .getRawMany();
 
       const data = rawData.map(
-        ({ shares, amountClaimed, performance, createdAt }) => {
+        ({
+          shares,
+          amountClaimed,
+          amountDeposited,
+          performance,
+          createdAt,
+        }) => {
+          console.log({
+            shares,
+            amountClaimed,
+            amountDeposited,
+            performance,
+            createdAt,
+          });
           return {
-            value: new Decimal(shares)
-              .mul(performance)
-              .plus(amountClaimed)
-              .toFixed(),
+            value: Decimal.max(
+              0,
+              new Decimal(shares)
+                .mul(performance)
+                .plus(amountClaimed)
+                .minus(amountDeposited),
+            ).toFixed(),
             createdAt,
           };
         },
