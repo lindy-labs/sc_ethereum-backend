@@ -15,7 +15,7 @@ export async function vaultPerformance() {
   const shares = (await vault.totalShares()) as BigNumber;
   const underlying = (await vault.totalUnderlyingMinusSponsored()) as BigNumber;
 
-  return new Decimal(underlying.mul(BigNumber.from(10).pow(18)).toString())
+  return new Decimal(underlying.toString())
     .dividedBy(shares.toString())
     .toFixed();
 }

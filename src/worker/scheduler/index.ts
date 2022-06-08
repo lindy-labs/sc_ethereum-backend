@@ -62,7 +62,7 @@ schedulerQueue.add('updateInvested', null, {
 
 schedulerQueue.add('collectPerformance', null, {
   repeat: {
-    every: 1000 * 60 * 60, // every hour
+    every: 1000 * 60 * 30, // every half-hour
   },
 });
 

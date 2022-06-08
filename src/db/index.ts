@@ -19,4 +19,4 @@ export const getJobRepository = async () => {
   return connection.getRepository(Job);
 };
 
-export { VaultMetric, Job };
+export { VaultMetric, Job, getConnection, FoundationMetric };
