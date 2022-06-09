@@ -2,7 +2,7 @@ import { BigNumber, Contract } from 'ethers';
 import { request, gql } from 'graphql-request';
 
 import config from '../config';
-import { wallet } from '../providers';
+import { polygonWallet } from '../providers';
 
 import { abi as donationABI } from '../abis/Donation';
 
@@ -35,15 +35,25 @@ type BatchedDonations = { [key: string]: StitchedDonation[][] };
 
 type StitchedDonations = { [key: string]: StitchedDonation };
 
-const donationContract = new Contract(config.donation, donationABI, wallet);
+const donationContract = new Contract(
+  config.donation,
+  donationABI,
+  polygonWallet,
+);
 
 export async function mintDonationNFT() {
-  const batchedDonations = batchDonations(stitchDonations(await donations(), await donationMints()));
+  const batchedDonations = batchDonations(
+    stitchDonations(await donations(), await donationMints()),
+  );
 
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
 
-    for (let batchNumber = 0; batchNumber < donations.length; batchNumber += 1) {
+    for (
+      let batchNumber = 0;
+      batchNumber < donations.length;
+      batchNumber += 1
+    ) {
       const donationBatch = donations[batchNumber];
 
       const args = donationBatch.map((donation: StitchedDonation) => {
@@ -64,7 +74,10 @@ export async function mintDonationNFT() {
   }
 }
 
-function stitchDonations(donations: Donation[], donationMints: DonationMint[]): StitchedDonations {
+function stitchDonations(
+  donations: Donation[],
+  donationMints: DonationMint[],
+): StitchedDonations {
   const donationsMap: StitchedDonations = {};
 
   donations.forEach((donation: Donation) => {
@@ -103,15 +116,20 @@ function batchDonations(donations: StitchedDonations): BatchedDonations {
 
       continue;
     }
-    
+
     // Increment the batchNumber for specified txHash if batchLimit has been reached.
     // This is done to prevent hitting transaction gas limit.
-    if (batchedDonations[donation.txHash][batchNumbers[donation.txHash]].length >= 240) {
+    if (
+      batchedDonations[donation.txHash][batchNumbers[donation.txHash]].length >=
+      240
+    ) {
       batchNumbers[donation.txHash] += 1;
     }
 
     // Push the donation into its corresponding donation batch.
-    batchedDonations[donation.txHash][batchNumbers[donation.txHash]].push(donation);
+    batchedDonations[donation.txHash][batchNumbers[donation.txHash]].push(
+      donation,
+    );
   }
 
   return batchedDonations;
