@@ -43,7 +43,7 @@ const donationContract = new Contract(
 
 export async function mintDonationNFT() {
   const batchedDonations = batchDonations(
-    stitchDonations(await donations(), await donationMints()),
+    stitchDonations(await getDonations(), await getDonationMints()),
   );
 
   for (const key in batchedDonations) {
@@ -135,7 +135,7 @@ function batchDonations(donations: StitchedDonations): BatchedDonations {
   return batchedDonations;
 }
 
-async function donations(): Promise<Donation[]> {
+async function getDonations(): Promise<Donation[]> {
   const query = gql`
     {
       donations {
@@ -151,7 +151,7 @@ async function donations(): Promise<Donation[]> {
   return (await request(config.graphURL.eth, query)).donations;
 }
 
-async function donationMints(): Promise<DonationMint[]> {
+async function getDonationMints(): Promise<DonationMint[]> {
   const query = gql`
     {
       donationMints {
