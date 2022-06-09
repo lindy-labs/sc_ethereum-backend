@@ -5,6 +5,8 @@ import config from '../config';
 import { polygonWallet } from '../providers';
 
 import { abi as donationABI } from '../abis/Donation';
+import {keyBy} from 'lodash';
+import {Dictionary} from 'async';
 
 type Donation = {
   id: string;
@@ -43,7 +45,7 @@ const donationContract = new Contract(
 
 export async function mintDonationNFT() {
   const batchedDonations = batchDonations(
-    stitchDonations(await getDonations(), await getMintedDonations()),
+    stitchDonations(await getDonations(), await getMintedDonations())
   );
 
   for (const key in batchedDonations) {
@@ -76,26 +78,22 @@ export async function mintDonationNFT() {
 
 function stitchDonations(
   donations: Donation[],
-  donationMints: DonationMint[],
-): StitchedDonations {
-  const donationsMap: StitchedDonations = {};
+  mintedDonations: DonationMint[],
+): Dictionary<StitchedDonation> {
+  const donationsById = keyBy(donations, 'id');
 
-  donations.forEach((donation: Donation) => {
-    donationsMap[donation.id] = donation as StitchedDonation;
-  });
-
-  donationMints.forEach((donationMint: DonationMint) => {
-    donationsMap[donationMint.id] = {
-      ...donationsMap[donationMint.id],
+  return mintedDonations.reduce((memo, mintedDonation: DonationMint) => {
+    memo[mintedDonation.id] = {
+      ...memo[mintedDonation.id],
+      ...mintedDonation,
       minted: true,
-      ...donationMint,
-    };
-  });
+    } as StitchedDonation;
 
-  return donationsMap;
+    return memo;
+  }, donationsById) as Dictionary<StitchedDonation>;
 }
 
-function batchDonations(donations: StitchedDonations): BatchedDonations {
+function batchDonations(donations: Dictionary<StitchedDonation>): BatchedDonations {
   const batchedDonations: BatchedDonations = {};
 
   let batchNumbers: { [txHash: string]: number } = {};
