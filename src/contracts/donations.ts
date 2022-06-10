@@ -6,7 +6,7 @@ import { polygonWallet } from '../providers';
 
 import { abi as donationABI } from '../abis/Donation';
 import { chunk, filter, groupBy, keyBy, mapValues } from 'lodash';
-import {Dictionary} from 'async';
+import { Dictionary } from 'async';
 
 type Donation = {
   id: string;
@@ -22,18 +22,9 @@ type DonationMint = {
   nftId: string;
 };
 
-type StitchedDonation = {
-  id: string;
-  txHash: string;
-  amount: string;
-  owner: string;
-  destination: string;
+interface StitchedDonation extends Donation, DonationMint {
   minted: boolean;
-  burned: boolean;
-  nftId: string;
-};
-
-type BatchedDonations = { [key: string]: StitchedDonation[][] };
+}
 
 const donationContract = new Contract(
   config.donation,
@@ -41,9 +32,11 @@ const donationContract = new Contract(
   polygonWallet,
 );
 
+const BATCH_LIMIT = 240;
+
 export async function mintDonationNFT() {
   const batchedDonations = batchDonations(
-    stitchDonations(await getDonations(), await getMintedDonations())
+    stitchDonations(await getDonations(), await getMintedDonations()),
   );
 
   for (const key in batchedDonations) {
@@ -77,7 +70,7 @@ export async function mintDonationNFT() {
 function stitchDonations(
   donations: Donation[],
   mintedDonations: DonationMint[],
-): Dictionary<StitchedDonation> {
+) {
   const donationsById = keyBy(donations, 'id');
 
   return mintedDonations.reduce((memo, mintedDonation: DonationMint) => {
@@ -91,12 +84,15 @@ function stitchDonations(
   }, donationsById) as Dictionary<StitchedDonation>;
 }
 
-function batchDonations(stitchedDonations: Dictionary<StitchedDonation>): BatchedDonations {
-  const donationsToMint: StitchedDonation[] = filter(stitchedDonations, (donation) => !donation.minted);
+function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
+  const donationsToMint: StitchedDonation[] = filter(
+    stitchedDonations,
+    (donation) => !donation.minted,
+  );
 
   const donationsByTxHash = groupBy(donationsToMint, 'txHash');
 
-  return mapValues(donationsByTxHash, (donations) => chunk(donations, 240));
+  return mapValues(donationsByTxHash, (donations) => chunk(donations, BATCH_LIMIT));
 }
 
 async function getDonations(): Promise<Donation[]> {
