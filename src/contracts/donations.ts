@@ -5,7 +5,7 @@ import config from '../config';
 import { polygonWallet } from '../providers';
 
 import { abi as donationABI } from '../abis/Donation';
-import {keyBy} from 'lodash';
+import { chunk, filter, groupBy, keyBy, mapValues } from 'lodash';
 import {Dictionary} from 'async';
 
 type Donation = {
@@ -34,8 +34,6 @@ type StitchedDonation = {
 };
 
 type BatchedDonations = { [key: string]: StitchedDonation[][] };
-
-type StitchedDonations = { [key: string]: StitchedDonation };
 
 const donationContract = new Contract(
   config.donation,
@@ -93,44 +91,12 @@ function stitchDonations(
   }, donationsById) as Dictionary<StitchedDonation>;
 }
 
-function batchDonations(donations: Dictionary<StitchedDonation>): BatchedDonations {
-  const batchedDonations: BatchedDonations = {};
+function batchDonations(stitchedDonations: Dictionary<StitchedDonation>): BatchedDonations {
+  const donationsToMint: StitchedDonation[] = filter(stitchedDonations, (donation) => !donation.minted);
 
-  let batchNumbers: { [txHash: string]: number } = {};
-  for (const key in donations) {
-    const donation = donations[key];
+  const donationsByTxHash = groupBy(donationsToMint, 'txHash');
 
-    // Keep track of batchNumber for each set of donations in a transaction.
-    if (!batchNumbers[donation.txHash]) {
-      batchNumbers[donation.txHash] = 0;
-    }
-
-    // Skip already minted donations.
-    if (donation.minted) continue;
-
-    // Initialize 2D array if this transaction key has no previous donation batch.
-    if (!batchedDonations[donation.txHash]) {
-      batchedDonations[donation.txHash] = [[donation]];
-
-      continue;
-    }
-
-    // Increment the batchNumber for specified txHash if batchLimit has been reached.
-    // This is done to prevent hitting transaction gas limit.
-    if (
-      batchedDonations[donation.txHash][batchNumbers[donation.txHash]].length >=
-      240
-    ) {
-      batchNumbers[donation.txHash] += 1;
-    }
-
-    // Push the donation into its corresponding donation batch.
-    batchedDonations[donation.txHash][batchNumbers[donation.txHash]].push(
-      donation,
-    );
-  }
-
-  return batchedDonations;
+  return mapValues(donationsByTxHash, (donations) => chunk(donations, 240));
 }
 
 async function getDonations(): Promise<Donation[]> {
