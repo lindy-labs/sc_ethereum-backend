@@ -5,7 +5,7 @@ import config from '../config';
 import { polygonWallet } from '../providers';
 
 import { abi as donationABI } from '../abis/Donation';
-import { chunk, groupBy, keyBy, mapValues } from 'lodash';
+import { chunk, differenceBy, groupBy, keyBy, mapValues } from 'lodash';
 import { Dictionary } from 'async';
 
 type Donation = {
@@ -15,16 +15,6 @@ type Donation = {
   owner: string;
   destination: string;
 };
-
-type MintedDonation = {
-  id: string;
-  burned: boolean;
-  nftId: string;
-};
-
-interface StitchedDonation extends Donation, MintedDonation {
-  minted: boolean;
-}
 
 const donationContract = new Contract(
   config.donation,
@@ -36,10 +26,11 @@ const BATCH_LIMIT = 240;
 
 export async function mintDonationNFT() {
   const mintPromises = [];
-  const batchedDonations = batchDonations(await getDonations(false));
+  const batchedDonations = batchDonationsForMint(await getDonationsToMint());
 
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
+
 
     for (
       let batchNumber = 0;
@@ -48,7 +39,7 @@ export async function mintDonationNFT() {
     ) {
       const donationBatch = donations[batchNumber];
 
-      const args = donationBatch.map((donation: StitchedDonation) => {
+      const args = donationBatch.map((donation: Donation) => {
         return {
           destinationId:
             donation.destination == '0x'
@@ -68,29 +59,7 @@ export async function mintDonationNFT() {
   await Promise.all(mintPromises);
 }
 
-function stitchDonations(
-  donations: Donation[],
-  mintedDonations: MintedDonation[],
-  includeMinted = true,
-) {
-  const mintedDonationsById = keyBy(mintedDonations, 'id');
-
-  return donations.reduce((memo: Dictionary<StitchedDonation>, donation: Donation) => {
-    const hasBeenMinted = donation.id in mintedDonationsById;
-
-    if (includeMinted ? hasBeenMinted : !hasBeenMinted) {
-      memo[donation.id] = {
-        ...memo[donation.id],
-        ...donation,
-        minted: true,
-      } as StitchedDonation;
-    }
-
-    return memo;
-  }, {}) as Dictionary<StitchedDonation>;
-}
-
-function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
+function batchDonationsForMint(stitchedDonations: Dictionary<Donation>) {
   const donationsByTxHash = groupBy(stitchedDonations, 'txHash');
 
   return mapValues(donationsByTxHash, (donations) =>
@@ -98,9 +67,7 @@ function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
   );
 }
 
-async function getDonations(
-  includeMinted: boolean,
-): Promise<Dictionary<StitchedDonation>> {
+async function getDonationsToMint() {
   const { donations } = await request(
     config.graphURL.eth,
     gql`
@@ -122,12 +89,13 @@ async function getDonations(
       {
         donationMints {
           id
-          burned
-          nftId
         }
       }
     `,
   );
 
-  return stitchDonations(donations, donationMints, includeMinted);
+  return keyBy(
+    differenceBy(donations, donationMints, 'id') as unknown as Donation[],
+    'id',
+  );
 }
