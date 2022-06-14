@@ -40,6 +40,8 @@ export async function mintDonationNFT() {
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
 
+    const mintPromises = [];
+
     for (
       let batchNumber = 0;
       batchNumber < donations.length;
@@ -60,8 +62,10 @@ export async function mintDonationNFT() {
         };
       });
 
-      donationContract.mint(key, batchNumber, args);
+      mintPromises.push(donationContract.mint(key, batchNumber, args));
     }
+
+    await Promise.all(mintPromises);
   }
 }
 
