@@ -62,7 +62,7 @@ export async function mintDonationNFT() {
         };
       });
 
-      await donationContract.mint(key, batchNumber, args);
+      donationContract.mint(key, batchNumber, args);
     }
   }
 }
@@ -92,7 +92,9 @@ function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
 
   const donationsByTxHash = groupBy(donationsToMint, 'txHash');
 
-  return mapValues(donationsByTxHash, (donations) => chunk(donations, BATCH_LIMIT));
+  return mapValues(donationsByTxHash, (donations) =>
+    chunk(donations, BATCH_LIMIT),
+  );
 }
 
 async function getDonations(): Promise<Donation[]> {
