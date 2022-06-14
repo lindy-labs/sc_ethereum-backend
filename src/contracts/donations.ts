@@ -35,9 +35,8 @@ const donationContract = new Contract(
 const BATCH_LIMIT = 240;
 
 export async function mintDonationNFT() {
-  const batchedDonations = batchDonations(await getDonations(false));
-
   const mintPromises = [];
+  const batchedDonations = batchDonations(await getDonations(false));
 
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
