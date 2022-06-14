@@ -5,7 +5,7 @@ import config from '../config';
 import { polygonWallet } from '../providers';
 
 import { abi as donationABI } from '../abis/Donation';
-import { chunk, filter, groupBy, keyBy, mapValues } from 'lodash';
+import { chunk, groupBy, keyBy, mapValues } from 'lodash';
 import { Dictionary } from 'async';
 
 type Donation = {
@@ -72,8 +72,10 @@ function stitchDonations(
 ) {
   const mintedDonationsById = keyBy(mintedDonations, 'id');
 
-  return donations.reduce((memo, donation: Donation) => {
-    if (donation.id in mintedDonationsById && includeMinted) {
+  return donations.reduce((memo: Dictionary<StitchedDonation>, donation: Donation) => {
+    const hasBeenMinted = donation.id in mintedDonationsById;
+
+    if (includeMinted ? hasBeenMinted : !hasBeenMinted) {
       memo[donation.id] = {
         ...memo[donation.id],
         ...donation,
@@ -82,16 +84,11 @@ function stitchDonations(
     }
 
     return memo;
-  }, mintedDonationsById) as Dictionary<StitchedDonation>;
+  }, {}) as Dictionary<StitchedDonation>;
 }
 
 function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
-  const donationsToMint: StitchedDonation[] = filter(
-    stitchedDonations,
-    (donation) => !donation.minted,
-  );
-
-  const donationsByTxHash = groupBy(donationsToMint, 'txHash');
+  const donationsByTxHash = groupBy(stitchedDonations, 'txHash');
 
   return mapValues(donationsByTxHash, (donations) =>
     chunk(donations, BATCH_LIMIT),
