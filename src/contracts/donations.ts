@@ -35,9 +35,7 @@ const donationContract = new Contract(
 const BATCH_LIMIT = 240;
 
 export async function mintDonationNFT() {
-  const batchedDonations = batchDonations(
-    stitchDonations(await getDonations(), await getMintedDonations()),
-  );
+  const batchedDonations = batchDonations(await getDonations(false));
 
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
@@ -70,18 +68,21 @@ export async function mintDonationNFT() {
 function stitchDonations(
   donations: Donation[],
   mintedDonations: MintedDonation[],
+  includeMinted = true,
 ) {
-  const donationsById = keyBy(donations, 'id');
+  const mintedDonationsById = keyBy(mintedDonations, 'id');
 
-  return mintedDonations.reduce((memo, mintedDonation: MintedDonation) => {
-    memo[mintedDonation.id] = {
-      ...memo[mintedDonation.id],
-      ...mintedDonation,
-      minted: true,
-    } as StitchedDonation;
+  return donations.reduce((memo, donation: Donation) => {
+    if (donation.id in mintedDonationsById && includeMinted) {
+      memo[donation.id] = {
+        ...memo[donation.id],
+        ...donation,
+        minted: true,
+      } as StitchedDonation;
+    }
 
     return memo;
-  }, donationsById) as Dictionary<StitchedDonation>;
+  }, mintedDonationsById) as Dictionary<StitchedDonation>;
 }
 
 function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
@@ -97,8 +98,8 @@ function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
   );
 }
 
-async function getDonations(): Promise<Donation[]> {
-  const query = gql`
+async function getDonations(includeMinted: boolean): Promise<Dictionary<StitchedDonation>> {
+  const { donations } = await request(config.graphURL.eth, gql`
     {
       donations {
         id
@@ -108,13 +109,9 @@ async function getDonations(): Promise<Donation[]> {
         destination
       }
     }
-  `;
+  `);
 
-  return (await request(config.graphURL.eth, query)).donations;
-}
-
-async function getMintedDonations(): Promise<MintedDonation[]> {
-  const query = gql`
+  const { donationMints } = await request(config.graphURL.polygon, gql`
     {
       donationMints {
         id
@@ -122,7 +119,7 @@ async function getMintedDonations(): Promise<MintedDonation[]> {
         nftId
       }
     }
-  `;
+  `);
 
-  return (await request(config.graphURL.polygon, query)).donationMints;
+  return stitchDonations(donations, donationMints, includeMinted);
 }
