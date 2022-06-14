@@ -1,5 +1,7 @@
 import fastify from 'fastify';
 import cors from 'fastify-cors';
+import fastifyStatic from '@fastify/static';
+import path from 'path';
 
 import logger from '../logger';
 import * as Monitoring from '../monitoring';
@@ -15,6 +17,11 @@ export const server = fastify({
 server.register(cors, {
   origin: process.env.NODE_ENV === 'development' ? '*' : /.*\.sandclock\.org$/,
   methods: ['GET'],
+});
+
+server.register(fastifyStatic, {
+  root: path.join(__dirname, '../public'),
+  serve: false,
 });
 
 server.setErrorHandler(async (error, request, reply) => {
