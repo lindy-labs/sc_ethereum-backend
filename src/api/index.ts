@@ -6,6 +6,7 @@ import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
 import config from '../config';
 import metricsRoutes from './metrics';
+import tosRoutes from './termsOfService';
 
 export const server = fastify({
   logger,
@@ -52,6 +53,8 @@ server.get('/api/organizations', async (_request, reply) => {
 });
 
 server.register(metricsRoutes, { prefix: '/api/metrics' });
+
+server.register(tosRoutes, { prefix: '/api/tos' });
 
 export function start() {
   return new Promise((resolve, reject) => {

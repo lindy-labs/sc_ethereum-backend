@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/dev.ts",
-    "build": "tsc && cp -R ./public ./build",
+    "build": "tsc && cp -R ./src/public ./build",
     "start": "NODE_ENV=production node build/server.js",
     "start:worker": "NODE_ENV=production node build/worker.js",
     "test": "jest"
