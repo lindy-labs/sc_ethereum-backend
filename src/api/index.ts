@@ -12,7 +12,7 @@ export const server = fastify({
 });
 
 server.register(cors, {
-  origin: process.env.NODE_ENV === 'development' ? '*' : /\*.sandclock.org/,
+  origin: process.env.NODE_ENV === 'development' ? '*' : /.*\.sandclock\.org$/,
   methods: ['GET'],
 });
 
