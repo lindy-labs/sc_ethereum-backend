@@ -98,28 +98,36 @@ function batchDonations(stitchedDonations: Dictionary<StitchedDonation>) {
   );
 }
 
-async function getDonations(includeMinted: boolean): Promise<Dictionary<StitchedDonation>> {
-  const { donations } = await request(config.graphURL.eth, gql`
-    {
-      donations {
-        id
-        txHash
-        amount
-        owner
-        destination
+async function getDonations(
+  includeMinted: boolean,
+): Promise<Dictionary<StitchedDonation>> {
+  const { donations } = await request(
+    config.graphURL.eth,
+    gql`
+      {
+        donations {
+          id
+          txHash
+          amount
+          owner
+          destination
+        }
       }
-    }
-  `);
+    `,
+  );
 
-  const { donationMints } = await request(config.graphURL.polygon, gql`
-    {
-      donationMints {
-        id
-        burned
-        nftId
+  const { donationMints } = await request(
+    config.graphURL.polygon,
+    gql`
+      {
+        donationMints {
+          id
+          burned
+          nftId
+        }
       }
-    }
-  `);
+    `,
+  );
 
   return stitchDonations(donations, donationMints, includeMinted);
 }
