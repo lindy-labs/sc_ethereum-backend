@@ -16,13 +16,13 @@ type Donation = {
   destination: string;
 };
 
-type DonationMint = {
+type MintedDonation = {
   id: string;
   burned: boolean;
   nftId: string;
 };
 
-interface StitchedDonation extends Donation, DonationMint {
+interface StitchedDonation extends Donation, MintedDonation {
   minted: boolean;
 }
 
@@ -69,11 +69,11 @@ export async function mintDonationNFT() {
 
 function stitchDonations(
   donations: Donation[],
-  mintedDonations: DonationMint[],
+  mintedDonations: MintedDonation[],
 ) {
   const donationsById = keyBy(donations, 'id');
 
-  return mintedDonations.reduce((memo, mintedDonation: DonationMint) => {
+  return mintedDonations.reduce((memo, mintedDonation: MintedDonation) => {
     memo[mintedDonation.id] = {
       ...memo[mintedDonation.id],
       ...mintedDonation,
@@ -113,7 +113,7 @@ async function getDonations(): Promise<Donation[]> {
   return (await request(config.graphURL.eth, query)).donations;
 }
 
-async function getMintedDonations(): Promise<DonationMint[]> {
+async function getMintedDonations(): Promise<MintedDonation[]> {
   const query = gql`
     {
       donationMints {
