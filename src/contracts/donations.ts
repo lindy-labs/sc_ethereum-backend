@@ -37,10 +37,10 @@ const BATCH_LIMIT = 240;
 export async function mintDonationNFT() {
   const batchedDonations = batchDonations(await getDonations(false));
 
+  const mintPromises = [];
+
   for (const key in batchedDonations) {
     const donations = batchedDonations[key];
-
-    const mintPromises = [];
 
     for (
       let batchNumber = 0;
@@ -64,9 +64,9 @@ export async function mintDonationNFT() {
 
       mintPromises.push(donationContract.mint(key, batchNumber, args));
     }
-
-    await Promise.all(mintPromises);
   }
+
+  await Promise.all(mintPromises);
 }
 
 function stitchDonations(
