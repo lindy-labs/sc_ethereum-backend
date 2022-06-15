@@ -91,7 +91,7 @@ async function depositOperations(): Promise<DepositOperation[]> {
     }
   `;
 
-  return (await request(config.graphURL, query)).depositOperations;
+  return (await request(config.graphURL.eth, query)).depositOperations;
 }
 
 async function redeemOperations(): Promise<RedeemOperation[]> {
@@ -105,5 +105,5 @@ async function redeemOperations(): Promise<RedeemOperation[]> {
     }
   `;
 
-  return (await request(config.graphURL, query)).redeemOperations;
+  return (await request(config.graphURL.eth, query)).redeemOperations;
 }

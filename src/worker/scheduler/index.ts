@@ -8,6 +8,7 @@ import updateInvested from '../../jobs/updateInvested';
 import finalizeDeposits from '../../jobs/finalizeDeposits';
 import finalizeRedemptions from '../../jobs/finalizeRedemptions';
 import collectFoundationsPerformance from '../../jobs/collectFoundationsPerformance';
+import mintDonations from '../../jobs/mintDonations';
 
 import redisConnection from '../../initializers/redis';
 
@@ -17,6 +18,7 @@ const JOBS: { [key: string]: Function } = {
   finalizeDeposits,
   finalizeRedemptions,
   collectFoundationsPerformance,
+  mintDonations,
 };
 
 const SCHEDULER_QUEUE = 'WorkerSchedulerQueue';
@@ -45,6 +47,12 @@ const schedulerWorker = new Worker(
   },
   { connection: redisConnection },
 );
+
+schedulerQueue.add('mintDonations', null, {
+  repeat: {
+    every: 1000 * 60 * 60, // every hour
+  },
+});
 
 schedulerQueue.add('updateInvested', null, {
   repeat: {
@@ -86,6 +94,7 @@ export async function start() {
   schedulerQueue.add('finalizeDeposits', null);
   schedulerQueue.add('finalizeRedemptions', null);
   schedulerQueue.add('collectFoundationsPerformance', null);
+  schedulerQueue.add('mintDonations', null);
   schedulerQueue.add('collectPerformance', { force: true });
 }
 

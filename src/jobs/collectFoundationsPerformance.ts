@@ -31,7 +31,7 @@ const JOB_NAME = 'collectFoundationsPerformance';
 const INTERVAL = 12;
 
 export default createJob(JOB_NAME, INTERVAL, async function () {
-  const { foundations }: Response = await request(config.graphURL, query);
+  const { foundations }: Response = await request(config.graphURL.eth, query);
 
   const foundationMetricsRaw = await Promise.all(
     foundations.map(async (foundation) => ({
