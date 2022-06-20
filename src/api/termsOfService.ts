@@ -1,4 +1,4 @@
-import { FastifyInstance, RegisterOptions } from 'fastify';
+import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import path from 'path';
 import fs from 'fs';
 import { getSignatoryRepository } from '../db';
@@ -37,10 +37,9 @@ const isValidSignatureFormat = (signature: string) => {
   }
 };
 
-export default function (
+export default async function (
   server: FastifyInstance,
-  _opts: RegisterOptions,
-  done: Function,
+  _opts: FastifyPluginOptions,
 ) {
   server.get('', async (_request, reply) => {
     return reply.sendFile('termsOfService.txt');
@@ -136,6 +135,4 @@ export default function (
       reply.send({ message: 'Current Terms of Service are signed' });
     },
   );
-
-  done();
 }
