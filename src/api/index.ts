@@ -1,11 +1,14 @@
 import fastify from 'fastify';
 import cors from 'fastify-cors';
+import fastifyStatic from '@fastify/static';
+import path from 'path';
 
 import logger from '../logger';
 import * as Monitoring from '../monitoring';
 import { organizations } from '../organizations';
 import config from '../config';
 import metricsRoutes from './metrics';
+import tosRoutes from './termsOfService';
 
 export const server = fastify({
   logger,
@@ -14,6 +17,11 @@ export const server = fastify({
 server.register(cors, {
   origin: process.env.NODE_ENV === 'development' ? '*' : /.*\.sandclock\.org$/,
   methods: ['GET'],
+});
+
+server.register(fastifyStatic, {
+  root: path.join(__dirname, '../public'),
+  serve: false,
 });
 
 server.setErrorHandler(async (error, request, reply) => {
@@ -52,6 +60,8 @@ server.get('/api/organizations', async (_request, reply) => {
 });
 
 server.register(metricsRoutes, { prefix: '/api/metrics' });
+
+server.register(tosRoutes, { prefix: '/api/tos' });
 
 export function start() {
   return new Promise((resolve, reject) => {
