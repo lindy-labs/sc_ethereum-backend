@@ -4,7 +4,7 @@ import fs from 'fs';
 import { getSignatoryRepository } from '../db';
 import { ethers } from 'ethers';
 
-const tosFile = path.join(__dirname, '../public/termsOfService.txt');
+const tosFile = path.join(__dirname, '../public/termsOfService.html');
 const fileContent = fs.readFileSync(tosFile, 'utf-8');
 
 interface BodyParams {
@@ -42,7 +42,7 @@ export default async function (
   _opts: FastifyPluginOptions,
 ) {
   server.get('', async (_request, reply) => {
-    return reply.sendFile('termsOfService.txt');
+    return reply.sendFile('termsOfService.html');
   });
 
   server.get<{ Params: { address: string } }>(
