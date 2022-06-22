@@ -5,8 +5,6 @@ import logger from '../../logger';
 
 import collectPerformance from '../../jobs/collectPerformance';
 import updateInvested from '../../jobs/updateInvested';
-import finalizeDeposits from '../../jobs/finalizeDeposits';
-import finalizeRedemptions from '../../jobs/finalizeRedemptions';
 import collectFoundationsPerformance from '../../jobs/collectFoundationsPerformance';
 import mintDonations from '../../jobs/mintDonations';
 
@@ -15,8 +13,6 @@ import redisConnection from '../../initializers/redis';
 const JOBS: { [key: string]: Function } = {
   collectPerformance,
   updateInvested,
-  finalizeDeposits,
-  finalizeRedemptions,
   collectFoundationsPerformance,
   mintDonations,
 };
@@ -73,18 +69,6 @@ schedulerQueue.add('collectFoundationsPerformance', null, {
   },
 });
 
-schedulerQueue.add('finalizeDeposits', null, {
-  repeat: {
-    every: 1000 * 60, // every minute
-  },
-});
-
-schedulerQueue.add('finalizeRedemptions', null, {
-  repeat: {
-    every: 1000 * 60, // every minute
-  },
-});
-
 schedulerWorker.on('failed', (job: Job, err: Error) => {
   logger.error(`${job.id} failed with ${err.message}`);
   Monitoring.captureException(err);
@@ -92,8 +76,6 @@ schedulerWorker.on('failed', (job: Job, err: Error) => {
 
 export async function start() {
   schedulerQueue.add('updateInvested', null);
-  schedulerQueue.add('finalizeDeposits', null);
-  schedulerQueue.add('finalizeRedemptions', null);
   schedulerQueue.add('collectFoundationsPerformance', null);
   schedulerQueue.add('mintDonations', null);
   schedulerQueue.add('collectPerformance', { force: true });
