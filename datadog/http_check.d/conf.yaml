@@ -1,0 +1,5 @@
+init_config:
+
+instances:
+  - name: Backend Staging
+    url: https://staging-server.sandclock.org/ping
