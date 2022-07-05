@@ -5,8 +5,8 @@ import path from 'path';
 
 import logger from '../logger';
 import * as Monitoring from '../monitoring';
-import { organizations } from '../organizations';
 import config from '../config';
+import organizationsRoutes from './organizations';
 import metricsRoutes from './metrics';
 import tosRoutes from './termsOfService';
 
@@ -53,11 +53,7 @@ server.get('/config', async (_request, reply) => {
   });
 });
 
-server.get('/api/organizations', async (_request, reply) => {
-  reply.status(200);
-  reply.header('Content-Type', 'application/json');
-  reply.send({ organizations });
-});
+server.register(organizationsRoutes, { prefix: '/api/organizations' });
 
 server.register(metricsRoutes, { prefix: '/api/metrics' });
 
