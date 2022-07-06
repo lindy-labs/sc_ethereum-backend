@@ -1,0 +1,8 @@
+init_config:
+
+instances:
+  - name: Backend - Ping
+    url: https://staging-server.sandclock.org/ping
+
+  - name: Backend - Organizations
+    url: https://staging-server.sandclock.org/api/organizations
