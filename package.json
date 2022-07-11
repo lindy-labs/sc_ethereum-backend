@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@datadog/datadog-api-client": "^1.0.0",
     "@fastify/static": "5.0.2",
     "@sentry/integrations": "^6.19.3",
     "@sentry/node": "^6.19.3",
