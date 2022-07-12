@@ -30,7 +30,7 @@ const createMetricsRequest = async (queueName: string) => {
     body: {
       series: _.map(jobCounts, (count: number, jobType: string) => {
         return {
-          metric: `${queue.name}.jobs.${jobType}`,
+          metric: `${queueName}.jobs.${jobType}`,
           type: 3,
           points: [
             {
