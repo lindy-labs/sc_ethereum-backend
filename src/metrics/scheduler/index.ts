@@ -1,9 +1,24 @@
 import { client, v2 } from '@datadog/datadog-api-client';
+import assert from 'assert';
 import { Queue } from 'bullmq';
 import _ from 'lodash';
-import util from 'util';
 
-const configuration = client.createConfiguration();
+assert(process.env.DD_API_KEY);
+assert(process.env.DD_APP_KEY);
+assert(process.env.DD_SITE);
+
+const configurationOpts = {
+  authMethods: {
+    apiKeyAuth: process.env.DD_API_KEY,
+    appKeyAuth: process.env.DD_APP_KEY,
+  },
+};
+
+const configuration = client.createConfiguration(configurationOpts);
+client.setServerVariables(configuration, {
+  site: process.env.DD_SITE,
+});
+
 const apiInstance = new v2.MetricsApi(configuration);
 
 const createMetricsRequest = async (queueName: string) => {
@@ -19,7 +34,7 @@ const createMetricsRequest = async (queueName: string) => {
           type: 3,
           points: [
             {
-              timestamp: new Date().getTime() / 1000,
+              timestamp: Math.ceil(new Date().getTime() / 1000),
               value: count,
             },
           ],
@@ -31,14 +46,5 @@ const createMetricsRequest = async (queueName: string) => {
 
 export const reportMetrics = async (queueName: string) => {
   const request = await createMetricsRequest(queueName);
-
-  console.log(
-    util.inspect(request, { showHidden: false, depth: null, colors: true }),
-  );
-
-  // const data = apiInstance.submitMetrics(request);
-
-  // console.log(
-  //   'API called successfully. Returned data: ' + JSON.stringify(data),
-  // );
+  await apiInstance.submitMetrics(request);
 };
