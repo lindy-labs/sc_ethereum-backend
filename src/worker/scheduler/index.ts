@@ -47,7 +47,10 @@ const schedulerWorker = new MetricsWorker(
     if (JOBS[job.name]) await JOBS[job.name](job.data);
     else throw new Error(`Unknown job ${job.name}`);
   },
-  { connection: redisConnection },
+  {
+    connection: redisConnection,
+    concurrency: 5,
+  },
 );
 
 schedulerQueue.add('mintDonations', null, {

@@ -39,7 +39,10 @@ const schedulerWorker = new MetricsWorker(
         break;
     }
   },
-  { connection: redisConnection },
+  {
+    connection: redisConnection,
+    concurrency: 2,
+  },
 );
 
 schedulerQueue.add('refreshOrganizations', null, {

@@ -20,10 +20,14 @@ export class MetricsWorker extends Worker {
       Connection,
     );
 
-    queue.add('reportSchedulerMetrics', null, {
-      repeat: {
-        every: 1000 * 30, // every half-minute
+    queue.add(
+      'reportSchedulerMetrics',
+      { force: true },
+      {
+        repeat: {
+          every: 1000 * 30, // every half-minute
+        },
       },
-    });
+    );
   }
 }
