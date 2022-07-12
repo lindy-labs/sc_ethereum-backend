@@ -1,4 +1,7 @@
 export CHAIN_ID=1
+export DD_API_KEY=API Key
+export DD_APP_KEY=Application Key
+export DD_SITE=datadoghq.eu
 export GIVING_BLOCK_PASSWORD=somepassword
 export GIVING_BLOCK_USERNAME=sandclock
 export ETH_GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
