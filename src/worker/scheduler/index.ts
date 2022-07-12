@@ -2,13 +2,13 @@ import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 
 import * as Monitoring from '../../monitoring';
 import logger from '../../logger';
+import redisConnection from '../../initializers/redis';
+import { MetricsWorker } from '../../metrics/scheduler/metricsWorker';
 
 import collectPerformance from '../../jobs/collectPerformance';
 import updateInvested from '../../jobs/updateInvested';
 import collectFoundationsPerformance from '../../jobs/collectFoundationsPerformance';
 import mintDonations from '../../jobs/mintDonations';
-
-import redisConnection from '../../initializers/redis';
 
 const JOBS: { [key: string]: Function } = {
   collectPerformance,
@@ -18,6 +18,7 @@ const JOBS: { [key: string]: Function } = {
 };
 
 const SCHEDULER_QUEUE = 'WorkerSchedulerQueue';
+const THREE_DAYS_IN_SECONDS = 259200;
 
 const scheduler = new QueueScheduler(SCHEDULER_QUEUE, {
   connection: redisConnection,
@@ -31,13 +32,17 @@ const schedulerQueue = new Queue(SCHEDULER_QUEUE, {
       type: 'exponential',
       delay: 1000,
     },
-    removeOnComplete: true,
-    removeOnFail: true,
+    removeOnComplete: {
+      age: THREE_DAYS_IN_SECONDS,
+    },
+    removeOnFail: {
+      age: THREE_DAYS_IN_SECONDS,
+    },
   },
 });
 
-const schedulerWorker = new Worker(
-  SCHEDULER_QUEUE,
+const schedulerWorker = new MetricsWorker(
+  schedulerQueue,
   async (job: Job) => {
     if (JOBS[job.name]) await JOBS[job.name](job.data);
     else throw new Error(`Unknown job ${job.name}`);
