@@ -21,12 +21,12 @@ client.setServerVariables(configuration, {
 
 const apiInstance = new v2.MetricsApi(configuration);
 
-const createMetricsRequest = async (queueName: string) => {
+export const reportMetrics = async (queueName: string) => {
   const queue = new Queue(queueName);
 
   const jobCounts = await queue.getJobCounts('wait', 'completed', 'failed');
 
-  return {
+  const request = {
     body: {
       series: _.map(jobCounts, (count: number, jobType: string) => {
         return {
@@ -42,9 +42,6 @@ const createMetricsRequest = async (queueName: string) => {
       }),
     },
   } as v2.MetricsApiSubmitMetricsRequest;
-};
 
-export const reportMetrics = async (queueName: string) => {
-  const request = await createMetricsRequest(queueName);
   await apiInstance.submitMetrics(request);
 };
