@@ -10,8 +10,11 @@ assert(process.env.STRATEGY);
 assert(process.env.VAULT);
 assert(process.env.DONATION);
 assert(process.env.UNDERLYING);
+assert(process.env.ENV);
+assert.match(process.env.ENV, /^(local|staging|production)$/i);
 
 export default {
+  env: process.env.ENV,
   chainID: process.env.CHAIN_ID,
   graphURL: {
     eth: process.env.ETH_GRAPH_URL,
