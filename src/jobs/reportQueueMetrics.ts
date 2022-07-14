@@ -7,7 +7,7 @@ import apiInstance from '../initializers/datadogApiClient';
 import config from '../config';
 
 const JOB_NAME = 'reportQueueMetrics';
-const INTERVAL = 1 / 12; // every 5 minutes 
+const INTERVAL = 1 / 12; // every 5 minutes
 
 export default createJob(
   JOB_NAME,
@@ -29,9 +29,7 @@ export default createJob(
                 value: count,
               },
             ],
-            tags: [
-              config.env,
-            ],
+            tags: [config.env],
           };
         }),
       },
