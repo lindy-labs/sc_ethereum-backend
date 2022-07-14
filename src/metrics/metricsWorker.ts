@@ -11,11 +11,10 @@ export class MetricsWorker extends Worker {
   ) {
     super(
       queue.name,
-      async (job: Job) => {
-        return job.name === 'reportQueueMetrics'
+      async (job: Job) =>
+        job.name === 'reportQueueMetrics'
           ? await reportQueueMetrics(job.data, queue.name)
-          : await fn(job);
-      },
+          : await fn(job),
       opts,
       Connection,
     );
@@ -25,7 +24,7 @@ export class MetricsWorker extends Worker {
       { force: true },
       {
         repeat: {
-          every: 1000 * 30, // every half-minute
+          every: 1000 * 60 * 5, // every five minutes
         },
       },
     );
