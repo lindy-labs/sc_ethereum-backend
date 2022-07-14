@@ -7,7 +7,7 @@ import redisConnection from '../../initializers/redis';
 import { MetricsWorker } from '../../metrics/metricsWorker';
 
 const SCHEDULER_QUEUE = 'ServerSchedulerQueue';
-const THREE_DAYS_IN_SECONDS = 259200;
+const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60;
 
 const scheduler = new QueueScheduler(SCHEDULER_QUEUE, {
   connection: redisConnection,
