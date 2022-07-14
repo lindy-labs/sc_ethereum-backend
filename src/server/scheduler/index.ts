@@ -1,10 +1,10 @@
-import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
+import { Job, Queue, QueueScheduler } from 'bullmq';
 
 import * as Monitoring from '../../monitoring';
 import logger from '../../logger';
 import refreshOrganizations from '../../jobs/refreshOrganizations';
 import redisConnection from '../../initializers/redis';
-import { MetricsWorker } from '../../metrics/scheduler/metricsWorker';
+import { MetricsWorker } from '../../metrics/metricsWorker';
 
 const SCHEDULER_QUEUE = 'ServerSchedulerQueue';
 const THREE_DAYS_IN_SECONDS = 259200;

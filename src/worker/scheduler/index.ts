@@ -3,7 +3,7 @@ import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 import * as Monitoring from '../../monitoring';
 import logger from '../../logger';
 import redisConnection from '../../initializers/redis';
-import { MetricsWorker } from '../../metrics/scheduler/metricsWorker';
+import { MetricsWorker } from '../../metrics/metricsWorker';
 
 import collectPerformance from '../../jobs/collectPerformance';
 import updateInvested from '../../jobs/updateInvested';

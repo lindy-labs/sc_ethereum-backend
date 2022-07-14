@@ -6,7 +6,7 @@ import { v2 } from '@datadog/datadog-api-client';
 import apiInstance from '../initializers/datadogApiClient';
 import config from '../config';
 
-const JOB_NAME = 'reportSchedulerMetrics';
+const JOB_NAME = 'reportQueueMetrics';
 const INTERVAL = 1 / 120; // every 30 seconds
 
 export default createJob(

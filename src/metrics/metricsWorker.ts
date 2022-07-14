@@ -1,6 +1,6 @@
 import { Job, Queue, RedisConnection, Worker, WorkerOptions } from 'bullmq';
 
-import reportSchedulerMetrics from '../../jobs/reportSchedulerMetrics';
+import reportQueueMetrics from '../jobs/reportQueueMetrics';
 
 export class MetricsWorker extends Worker {
   constructor(
@@ -12,8 +12,8 @@ export class MetricsWorker extends Worker {
     super(
       queue.name,
       async (job: Job) => {
-        return job.name === 'reportSchedulerMetrics'
-          ? await reportSchedulerMetrics(job.data, queue.name)
+        return job.name === 'reportQueueMetrics'
+          ? await reportQueueMetrics(job.data, queue.name)
           : await fn(job);
       },
       opts,
@@ -21,7 +21,7 @@ export class MetricsWorker extends Worker {
     );
 
     queue.add(
-      'reportSchedulerMetrics',
+      'reportQueueMetrics',
       { force: true },
       {
         repeat: {
