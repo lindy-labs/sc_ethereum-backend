@@ -49,7 +49,7 @@ const schedulerWorker = new MetricsWorker(
   },
   {
     connection: redisConnection,
-    concurrency: 5,
+    concurrency: 2,
   },
 );
 
