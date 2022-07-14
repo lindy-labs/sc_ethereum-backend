@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { v2 } from '@datadog/datadog-api-client';
 
 import apiInstance from '../initializers/datadogApiClient';
+import config from '../config';
 
 const JOB_NAME = 'reportSchedulerMetrics';
 const INTERVAL = 1 / 120; // every 30 seconds
@@ -27,6 +28,9 @@ export default createJob(
                 timestamp: Math.ceil(new Date().getTime() / 1000),
                 value: count,
               },
+            ],
+            tags: [
+              config.env,
             ],
           };
         }),
