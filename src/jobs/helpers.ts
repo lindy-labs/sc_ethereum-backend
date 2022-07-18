@@ -13,7 +13,7 @@ interface Context {
 export function createJob(
   name: string,
   interval: number,
-  fn: (ctx: Context) => any,
+  fn: (ctx: Context, ...args: any) => any,
 ) {
   const context = {
     logger: logger.child({
@@ -21,10 +21,10 @@ export function createJob(
     }),
   };
 
-  return async (data: Data | null) => {
+  return async (data: Data | null, ...args: any) => {
     if (!data?.force && (await alreadyRun(name, interval))) return;
 
-    const result = await fn(context);
+    const result = await fn(context, ...args);
 
     await finishJob(name, context);
 
