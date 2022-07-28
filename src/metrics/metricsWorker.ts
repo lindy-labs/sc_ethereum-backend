@@ -13,7 +13,7 @@ export class MetricsWorker extends Worker {
       queue.name,
       async (job: Job) =>
         job.name === 'reportQueueMetrics'
-          ? await reportQueueMetrics(job.data, queue.name)
+          ? await reportQueueMetrics(job.data, queue)
           : await fn(job),
       opts,
       Connection,
