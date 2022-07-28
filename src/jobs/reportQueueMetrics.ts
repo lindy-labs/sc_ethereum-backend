@@ -12,16 +12,14 @@ const INTERVAL = 1 / 12; // every 5 minutes
 export default createJob(
   JOB_NAME,
   INTERVAL,
-  async function (_ctx, queueName: string) {
-    const queue = new Queue(queueName);
-
+  async function (_ctx, queue: Queue) {
     const jobCounts = await queue.getJobCounts('wait', 'completed', 'failed');
 
     const request = {
       body: {
         series: _.map(jobCounts, (count: number, jobType: string) => {
           return {
-            metric: `${queueName}.jobs.${jobType}`,
+            metric: `${queue.name}.jobs.${jobType}`,
             type: 3,
             points: [
               {
