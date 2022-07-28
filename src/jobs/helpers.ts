@@ -10,10 +10,10 @@ interface Context {
   logger: Logger;
 }
 
-export function createJob(
+export function createJob<T>(
   name: string,
   interval: number,
-  fn: (ctx: Context, ...args: any) => any,
+  fn: (ctx: Context, args: T) => any,
 ) {
   const context = {
     logger: logger.child({
@@ -21,10 +21,10 @@ export function createJob(
     }),
   };
 
-  return async (data: Data | null, ...args: any) => {
+  return async (data: Data | null, args: T) => {
     if (!data?.force && (await alreadyRun(name, interval))) return;
 
-    const result = await fn(context, ...args);
+    const result = await fn(context, args);
 
     await finishJob(name, context);
 
