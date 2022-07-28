@@ -1,11 +1,13 @@
-import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
+import { Job, Queue, QueueScheduler } from 'bullmq';
 
 import * as Monitoring from '../../monitoring';
 import logger from '../../logger';
 import refreshOrganizations from '../../jobs/refreshOrganizations';
 import redisConnection from '../../initializers/redis';
+import { MetricsWorker } from '../../metrics/metricsWorker';
 
 const SCHEDULER_QUEUE = 'ServerSchedulerQueue';
+const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60;
 
 const scheduler = new QueueScheduler(SCHEDULER_QUEUE, {
   connection: redisConnection,
@@ -19,13 +21,17 @@ const schedulerQueue = new Queue(SCHEDULER_QUEUE, {
       type: 'exponential',
       delay: 1000,
     },
-    removeOnComplete: true,
-    removeOnFail: true,
+    removeOnComplete: {
+      age: THREE_DAYS_IN_SECONDS,
+    },
+    removeOnFail: {
+      age: THREE_DAYS_IN_SECONDS,
+    },
   },
 });
 
-const schedulerWorker = new Worker(
-  SCHEDULER_QUEUE,
+const schedulerWorker = new MetricsWorker(
+  schedulerQueue,
   async (job: Job) => {
     switch (job.name) {
       case 'refreshOrganizations':
@@ -33,7 +39,10 @@ const schedulerWorker = new Worker(
         break;
     }
   },
-  { connection: redisConnection },
+  {
+    connection: redisConnection,
+    concurrency: 2,
+  },
 );
 
 schedulerQueue.add('refreshOrganizations', null, {

@@ -1,4 +1,8 @@
 export CHAIN_ID=1
+export DD_API_KEY=API Key
+export DD_APP_KEY=Application Key
+export DD_SITE=datadoghq.eu
+export ENV=local
 export GIVING_BLOCK_PASSWORD=somepassword
 export GIVING_BLOCK_USERNAME=sandclock
 export ETH_GRAPH_URL=http://127.0.0.1:8000/subgraphs/name/sandclock-eth
@@ -14,3 +18,10 @@ export STRATEGY=0xFa7447c91989141De3Fd4988810e358119EF2e7f
 export VAULT=0x1c8967Af415b1516c96c08880aA0E87e82161b9a
 export DONATION=0x470B125472930374AE711dE53B9D4221889Fe131
 export UNDERLYING=0x35a501AA1c8f1dA253beD53FF8c0738645d7566A
+
+# Synpress variables
+export CYPRESS_BASE_URL=URL to test
+export CYPRESS_STAGING_PASSWORD=Staging website password
+export NETWORK_NAME=ropsten
+export RPC_URL=$ETH_RPC_URL
+export SECRET_WORDS="your secret mnemonic"

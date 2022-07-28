@@ -26,3 +26,15 @@ Run the app:
 ```
 bin/server
 ```
+
+## Test
+
+**Requirements**
+
+- You should have Google Chrome in your system;
+
+Run the tests with:
+
+```
+source .envrc && yarn test
+```
