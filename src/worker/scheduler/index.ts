@@ -10,7 +10,7 @@ import updateInvested from '../../jobs/updateInvested';
 import collectFoundationsPerformance from '../../jobs/collectFoundationsPerformance';
 import mintDonations from '../../jobs/mintDonations';
 
-const JOBS: { [key: string]: Function } = {
+const JOBS: { [key: string]: typeof collectPerformance } = {
   collectPerformance,
   updateInvested,
   collectFoundationsPerformance,
@@ -44,7 +44,7 @@ const schedulerQueue = new Queue(SCHEDULER_QUEUE, {
 const schedulerWorker = new MetricsWorker(
   schedulerQueue,
   async (job: Job) => {
-    if (JOBS[job.name]) await JOBS[job.name](job.data);
+    if (JOBS[job.name]) await JOBS[job.name](job.data, undefined);
     else throw new Error(`Unknown job ${job.name}`);
   },
   {

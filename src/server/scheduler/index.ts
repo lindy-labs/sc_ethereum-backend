@@ -35,7 +35,7 @@ const schedulerWorker = new MetricsWorker(
   async (job: Job) => {
     switch (job.name) {
       case 'refreshOrganizations':
-        await refreshOrganizations(job.data);
+        await refreshOrganizations(job.data, undefined);
         break;
     }
   },
